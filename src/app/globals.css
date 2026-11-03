@@ -618,3 +618,63 @@ body{font-size:15px}
 }
 @media print{.tn13-mobile-links{display:none!important}}
 /* TN SETTINGS MOBILE V13 END */
+
+/* TN DASHBOARD MOBILE V14 START */
+/* Keep the real iPhone viewport width: do not scale the page or disable pinch zoom. */
+@media (max-width: 900px) {
+  .app-layout { width: 100%; max-width: 100%; min-width: 0; overflow-x: clip; }
+  .work-area { margin-left: 0; width: 100%; max-width: 100%; min-width: 0; }
+  .topbar { width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; }
+  .topbar-left { min-width: 0; flex: 1 1 0; }
+  .topbar-right { min-width: 0; flex: 0 0 auto; }
+  .breadcrumb-current { min-width: 0; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .main-content { width: 100%; max-width: 100%; min-width: 0; }
+  .main-content .page-title-row > div:first-child { min-width: 0; }
+  .main-content .panel, .main-content .grid-stats, .main-content .two-col, .main-content .two-col > * { min-width: 0; }
+  .main-content .two-col { grid-template-columns: minmax(0, 1fr); }
+  .main-content .table-wrap { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+@media (max-width: 630px) {
+  .topbar, .topbar-left, .topbar-right { gap: 8px; }
+  .topbar .hamburger { flex: 0 0 36px; }
+  .topbar .mode-chip { flex: 0 0 auto; }
+  .main-content { padding-left: 12px; padding-right: 12px; }
+  .page-title-row { flex-wrap: wrap; align-items: flex-start; gap: 8px; }
+  .page-title-row > div:first-child { flex: 1 1 100%; max-width: 100%; }
+  .page-title-row .page-action { margin-left: 0; max-width: 100%; }
+  .main-content:has(.tn14-dashboard-hero) .page-title-row { margin-bottom: 14px; }
+  .main-content:has(.tn14-dashboard-hero) .page-title-row h1 {
+    font-size: clamp(20px, 5.5vw, 23px); line-height: 1.3; letter-spacing: -.5px; overflow-wrap: break-word;
+  }
+  .main-content:has(.tn14-dashboard-hero) .page-title-row p { font-size: 12px; line-height: 1.55; margin-top: 5px; }
+  .main-content:has(.tn14-dashboard-hero) .page-action { display: none; }
+  .tn14-dashboard-hero {
+    padding: 16px !important; border-radius: 16px; flex-direction: column; align-items: stretch !important;
+    gap: 13px !important; width: 100%; max-width: 100%; min-width: 0;
+  }
+  .tn14-dashboard-hero > div:first-child { min-width: 0; width: 100%; }
+  .tn14-dashboard-hero h2 { font-size: clamp(17px, 4.7vw, 20px) !important; line-height: 1.42; letter-spacing: -.45px; overflow-wrap: break-word; }
+  .tn14-dashboard-hero p { font-size: 12px !important; line-height: 1.65; }
+  .tn14-dashboard-hero > a { display: flex; width: 100%; max-width: 100%; min-height: 46px; height: auto; padding: 12px; white-space: normal; }
+  .tn14-dashboard-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-bottom: 14px !important; min-width: 0; }
+  .tn14-dashboard-filters > .hint { grid-column: 1 / -1; margin: 0 !important; font-size: 12px; }
+  .tn14-dashboard-filters > .pill { width: 100%; min-width: 0; min-height: 42px; padding: 8px 3px; font-size: 12px; text-align: center; white-space: normal; }
+  .tn14-dashboard-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+  .tn14-dashboard-stats > .stat { min-width: 0; padding: 12px; min-height: 132px; }
+  .tn14-dashboard-stats .stat-top { display: flex; align-items: flex-start; gap: 6px; font-size: 11px; line-height: 1.42; }
+  .tn14-dashboard-stats .stat-top > span:first-child { min-width: 0; flex: 1; overflow-wrap: break-word; }
+  .tn14-dashboard-stats .stat-icon { width: 27px; height: 27px; flex: 0 0 27px; }
+  .tn14-dashboard-stats .stat strong { font-size: clamp(15px, 4.6vw, 20px); line-height: 1.35; letter-spacing: -.65px; overflow-wrap: anywhere; margin: 11px 0 5px; }
+  .tn14-dashboard-stats .stat small { display: block; font-size: 11px; line-height: 1.5; }
+  .tn14-dashboard-sections { display: grid; grid-template-columns: minmax(0, 1fr); gap: 13px; margin-top: 13px; }
+  .tn14-dashboard-sections > .panel { min-width: 0; }
+  .tn14-dashboard-sections .panel-head { flex-wrap: wrap; gap: 9px; }
+  .tn14-dashboard-sections .panel-head > div { min-width: 0; }
+  .tn14-dashboard-sections .panel-head .btn { white-space: normal; min-height: 40px; height: auto; }
+}
+@media (max-width: 359px) {
+  .tn14-dashboard-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tn14-dashboard-stats { grid-template-columns: minmax(0, 1fr); }
+  .main-content:has(.tn14-dashboard-hero) .page-eyebrow { letter-spacing: .65px; }
+}
+/* TN DASHBOARD MOBILE V14 END */
