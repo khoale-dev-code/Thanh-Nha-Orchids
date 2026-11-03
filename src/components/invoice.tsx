@@ -86,7 +86,6 @@ export function InvoiceContent({order,carton,settings}:{order:Order;carton?:Cart
       <strong>{settings.invoice_note||'Cảm ơn quý khách đã mua hàng!'}</strong>
       <p>Facebook: fb.com/vuonlanthanhnha</p>
       {settings.shop_phone&&<p>Liên hệ: {settings.shop_phone}</p>}
-      <p className="receipt-small">Phiếu bán hàng nội bộ, không thay thế hóa đơn điện tử theo quy định.</p>
     </footer>
   </article>;
 }
