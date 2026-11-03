@@ -7,6 +7,7 @@ import {useStore} from '@/context/store';
 import {browserDb} from '@/lib/supabase';
 import type {Order,CartonDetails} from '@/lib/types';
 import {money} from '@/lib/math';
+import './invoice-image-v15.css';
 
 const FACEBOOK_URL='https://www.facebook.com/vuonlanthanhnha/?locale=vi_VN';
 const FACEBOOK_LABEL='facebook.com/vuonlanthanhnha';
@@ -119,10 +120,40 @@ export function InvoicePage(){
 
   const toBlob=async()=>{
     if(!ref.current) throw new Error('Không tìm thấy mẫu hóa đơn');
-    const {toBlob}=await import('html-to-image');
-    const blob=await toBlob(ref.current,{pixelRatio:2,backgroundColor:'#ffffff',cacheBust:true,skipFonts:true});
-    if(!blob) throw Error('Không tạo được ảnh hóa đơn');
-    return blob;
+    const paper=ref.current.querySelector<HTMLElement>('.cafe-receipt');
+    if(!paper) throw new Error('Không tìm thấy nội dung phiếu in');
+    const {toBlob:renderBlob}=await import('html-to-image');
+    // An offscreen clone decouples capture from the iPhone viewport and CSS page zoom.
+    const host=document.createElement('div');
+    host.className='print-page';
+    Object.assign(host.style,{
+      position:'fixed',left:'-10000px',top:'0',width:'302px',height:'auto',
+      overflow:'visible',pointerEvents:'none',backgroundColor:'#fff',zIndex:'-1'
+    });
+    const copy=paper.cloneNode(true) as HTMLElement;
+    copy.classList.add('tn15-export-paper');
+    host.appendChild(copy);
+    document.body.appendChild(host);
+    try{
+      if(document.fonts?.ready) await document.fonts.ready;
+      await Promise.all(Array.from(copy.querySelectorAll('img')).map(async img=>{
+        if(img.complete&&img.naturalWidth>0)return;
+        await new Promise<void>(resolve=>{
+          const finish=()=>resolve();
+          img.addEventListener('load',finish,{once:true});
+          img.addEventListener('error',finish,{once:true});
+          setTimeout(finish,3000);
+        });
+      }));
+      const height=Math.max(1,Math.ceil(copy.getBoundingClientRect().height));
+      if(height>15500) throw new Error('Hóa đơn quá dài để lưu một ảnh trên iPhone. Hãy in hoặc tách đơn thành nhiều ảnh.');
+      const pixelRatio=height>7300?1:2;
+      const blob=await renderBlob(copy,{
+        width:302,height,pixelRatio,backgroundColor:'#ffffff',cacheBust:true,skipFonts:true
+      });
+      if(!blob)throw new Error('Không tạo được ảnh hóa đơn. Vui lòng thử nút Chia sẻ ảnh.');
+      return blob;
+    }finally{host.remove();}
   };
 
   const download=async()=>{

@@ -1,0 +1,24 @@
+/* Thanh Nha V15: customer address picker */
+.tn15-address{min-width:0;display:grid;gap:11px;border:1px solid #dce9df;background:#fbfdfb;padding:14px;border-radius:15px}
+.tn15-address-top{display:grid;gap:4px;color:#264633}
+.tn15-address-top strong{font-size:14px;font-weight:800}
+.tn15-address-top strong span{color:#bb3737}
+.tn15-address-top small,.tn15-address-source{color:#677e6f;font-size:11px;line-height:1.55}
+.tn15-address-modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tn15-address-modes button{border:1px solid #d7e5dc;border-radius:11px;background:white;color:#365842;padding:10px 9px;min-height:46px;font-weight:700;font-size:12px;cursor:pointer}
+.tn15-address-modes button.selected{border-color:#099958;background:#e7f7ec;color:#087a46;box-shadow:inset 0 0 0 1px #099958}
+.tn15-address-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.tn15-address .field{display:grid;gap:6px;min-width:0;font-weight:700;font-size:12px;color:#415b49}
+.tn15-address .input,.tn15-address .select,.tn15-address .textarea{width:100%;min-width:0;min-height:48px;font-size:16px}
+.tn15-address .select{max-width:100%}
+.tn15-address-street{grid-column:1/-1}
+.tn15-address-preview{display:grid;gap:3px;border:1px solid #bfe5ca;background:#e9f8ee;padding:12px;border-radius:11px;overflow-wrap:anywhere}
+.tn15-address-preview span{font-size:11px;color:#598668}
+.tn15-address-preview strong{color:#205438;font-size:13px;font-weight:800}
+.tn15-address-note{font-size:12px;color:#758576;margin:0;line-height:1.6}
+.tn15-address-switch{border:0;background:transparent;padding:8px 0;text-align:left;color:#00884e;font-size:12px;font-weight:800;cursor:pointer}
+.tn15-address-error{padding:10px;border:1px solid #edc5c5;color:#9b3c3c;border-radius:10px;background:#fff7f7;font-size:12px}
+.tn15-address-error button{border:0;background:transparent;text-decoration:underline;color:inherit;font-weight:800}
+.tn15-address-modes button:focus-visible,.tn15-address-switch:focus-visible{outline:3px solid #5cba83;outline-offset:2px}
+@media(max-width:550px){.tn15-address-fields{grid-template-columns:1fr}.tn15-address-street{grid-column:auto}.tn15-address{padding:12px}.tn15-address-modes button{font-size:11px;padding:8px 5px}}
+@media(max-width:350px){.tn15-address-modes{grid-template-columns:1fr}}

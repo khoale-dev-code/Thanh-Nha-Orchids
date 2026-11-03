@@ -3,6 +3,7 @@ import {Facebook,RefreshCw,UserRoundPlus,Users,Video,ShoppingBasket} from 'lucid
 import type {Customer} from '@/lib/types';
 import type {LeadRow} from '@/lib/family-operations';
 import './checkout-customer-v11.css';
+import {DeliveryAddressV15} from './delivery-address-v15';
 
 export type CustomerSource='walkin'|'facebook'|'tiktok'|'saved';
 const sources:{id:CustomerSource;label:string;help:string}[]=[
@@ -49,9 +50,9 @@ export function CheckoutCustomerV11(p:Props){
        <label className="field pos-contact-field">Số điện thoại {(!p.isCounter)&&<b>*</b>}
          <input type="tel" inputMode="tel" autoComplete="tel" className="input" value={p.guestPhone} onChange={e=>p.onGuestPhoneChange(e.target.value)} maxLength={20} placeholder="09xx xxx xxx"/>
        </label>
-       <label className="field pos-contact-field pos-contact-full">Địa chỉ nhận hàng {(!p.isCounter)&&<b>*</b>}
-         <textarea className="textarea" rows={2} value={p.guestAddress} onChange={e=>p.onGuestAddressChange(e.target.value)} maxLength={500} placeholder="Số nhà, đường, xã/phường, tỉnh/thành phố"/>
-       </label>
+       <div className="pos-contact-full">
+         <DeliveryAddressV15 key={p.selectedLead?.id||p.source} value={p.guestAddress} onChange={p.onGuestAddressChange} required={!p.isCounter}/>
+       </div>
        {social&&<label className="pos-contact-checkbox pos-contact-full">
          <input type="checkbox" checked={p.rememberContact} onChange={e=>p.onRememberContactChange(e.target.checked)}/>
          <span>Lưu khách này vào danh bạ để lần sau chốt nhanh hơn <small>Chỉ lưu khi có tên và số điện thoại. Nếu đã có SĐT, dùng khách cũ.</small></span>
