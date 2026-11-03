@@ -1,0 +1,80 @@
+/* Thanh Nha V19: mobile-only order directory. No changes to desktop tables. */
+.tn19-directory{display:none}
+@media (max-width:767px){
+  .tn19-orders-panel{padding:15px 13px 18px;min-width:0;overflow:visible}
+  .tn19-orders-panel>.panel-head{display:flex;flex-wrap:wrap;align-items:flex-start;gap:10px;margin-bottom:16px}
+  .tn19-orders-panel>.panel-head>div{min-width:0;flex:1 1 180px}
+  .tn19-orders-panel>.panel-head h2{font-size:clamp(17px,4.8vw,21px);letter-spacing:-.4px;margin:0}
+  .tn19-orders-panel>.panel-head p{font-size:12px;line-height:1.55}
+  .tn19-orders-panel>.panel-head>.soft-tag{flex:0 0 auto;max-width:100%;font-size:11px;padding:9px 12px}
+  .tn19-desktop-filters,.tn19-orders-panel>.orders-desktop,.tn19-orders-panel>.empty{display:none!important}
+  .tn19-directory{display:block;min-width:0}
+  .tn19-search-wrap{display:flex;align-items:center;gap:10px;background:#f9fcfa;border:1px solid #dfebe4;border-radius:16px;color:#77948a;min-height:54px;padding:0 13px;min-width:0;transition:box-shadow .18s,border-color .18s}
+  .tn19-search-wrap:focus-within{border-color:#22ac65;box-shadow:0 0 0 3px rgba(0,166,81,.09);background:#fff}
+  .tn19-search-wrap input{display:block;min-width:0;width:100%;flex:1 1 auto;border:0;outline:0;padding:11px 0;background:transparent;color:#173c2b;font-size:16px!important;line-height:1.45;-webkit-appearance:none;appearance:none}
+  .tn19-search-wrap input::placeholder{color:#9baca2;opacity:1}
+  .tn19-search-wrap input::-webkit-search-cancel-button{display:none}
+  .tn19-clear{display:grid;place-items:center;flex:0 0 32px;min-width:32px;height:36px;background:transparent;color:#91a59a;border:0;border-radius:10px}
+  .tn19-filter-track{display:flex;align-items:center;gap:8px;padding:15px 1px 13px;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .tn19-filter-track::-webkit-scrollbar{display:none}
+  .tn19-filter-pill{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;min-height:40px;padding:0 13px;border-radius:13px;border:1px solid #e1ebe4;background:#fff;color:#60796a;font-size:12px;font-weight:750;white-space:nowrap}
+  .tn19-filter-pill span{display:grid;place-items:center;min-width:22px;height:23px;padding:0 6px;border-radius:8px;background:#f2f6f2;font-size:11px;color:#83988a}
+  .tn19-filter-pill.is-selected{color:#fff;background:#087e49;border-color:#087e49;box-shadow:0 6px 13px rgba(0,132,67,.13)}
+  .tn19-filter-pill.is-selected span{color:#087e49;background:#eafaf1}
+  .tn19-list-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 12px}
+  .tn19-list-heading strong{font-size:14px;color:#244734}
+  .tn19-list-heading span{font-size:11px;color:#92a49a}
+  .tn19-card-list{display:grid;gap:13px}
+  .tn19-card{background:linear-gradient(180deg,#fff 0%,#fcfefd 100%);border:1px solid #e5eee8;border-radius:20px;min-width:0;box-shadow:0 10px 26px rgba(22,61,33,.042);overflow:hidden}
+  .tn19-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 15px 13px;border-bottom:1px solid #edf3ef}
+  .tn19-card-id{display:flex;align-items:center;gap:9px;min-width:0}
+  .tn19-card-id-icon{display:grid;place-items:center;width:34px;height:34px;flex:0 0 34px;background:#f0f8f1;color:#13864d;border-radius:11px}
+  .tn19-card-id strong{font-size:clamp(12px,3.6vw,14px);min-width:0;overflow-wrap:anywhere;font-weight:800;letter-spacing:-.15px}
+  .tn19-state{display:inline-flex;justify-content:center;text-align:center;align-items:center;flex:0 0 auto;padding:7px 9px;border-radius:100px;font-size:10px;line-height:1.35;font-weight:800;max-width:45%}
+  .tn19-card-customer{display:flex;gap:10px;padding:15px 15px 10px;align-items:center;min-width:0}
+  .tn19-card-avatar{display:grid;place-items:center;border-radius:14px;width:42px;height:42px;flex:0 0 42px;background:#ecf7f0;color:#348659}
+  .tn19-card-customer-name{flex:1;min-width:0}
+  .tn19-card-customer-name b{display:block;font-size:15px;color:#213d2c;line-height:1.45;overflow-wrap:anywhere}
+  .tn19-card-customer-name span{display:block;font-size:12px;color:#899e91;margin-top:3px;overflow-wrap:anywhere}
+  .tn19-card-meta{display:flex;gap:12px 16px;flex-wrap:wrap;padding:0 15px 14px;color:#819889;font-size:11px}
+  .tn19-card-meta span{display:inline-flex;align-items:center;gap:5px}
+  .tn19-card-finance{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#f5fbf6;border-top:1px solid #e6f0e8;border-bottom:1px solid #e6f0e8;padding:12px 15px}
+  .tn19-card-finance>div{display:grid;gap:2px;min-width:0}
+  .tn19-total-label{color:#779081;font-size:11px}
+  .tn19-card-finance strong{font-size:clamp(18px,5vw,22px);line-height:1.35;color:#087d43;letter-spacing:-.5px;overflow-wrap:anywhere}
+  .tn19-payment{display:inline-flex;align-items:center;gap:5px;border-radius:10px;font-size:11px;line-height:1.3;font-weight:750;padding:8px 9px;white-space:nowrap}
+  .tn19-payment.is-paid{background:#e3f7e9;color:#137b45}
+  .tn19-payment.is-unpaid{background:#fff0d9;color:#a46c22}
+  .tn19-card-actions{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.9fr);gap:9px;padding:12px 15px 14px}
+  .tn19-card-actions>*{min-height:46px;min-width:0;display:flex;justify-content:center;align-items:center;gap:7px;border-radius:13px;font-size:12px;font-weight:800;padding:10px 8px;text-align:center}
+  .tn19-detail-button{border:0;background:#078a4c;color:#fff}
+  .tn19-invoice-link{border:1px solid #dcebe0;background:#fff;color:#276b46}
+  .tn19-empty{border:1px dashed #cde5d5;border-radius:18px;background:#f9fcfa;padding:29px 15px;text-align:center;display:grid;justify-items:center;gap:8px;color:#8da597}
+  .tn19-empty strong{color:#345c43;font-size:15px}
+  .tn19-empty p{font-size:12px;line-height:1.6;max-width:250px;margin:0}
+  .tn19-empty button{border:0;color:#fff;background:#078a4c;padding:11px 17px;border-radius:11px;font-weight:700;margin-top:5px}
+  .tn19-order-backdrop{align-items:end;place-items:end center;padding:0;z-index:110}
+  .tn19-order-detail{width:100%;max-width:100%;max-height:calc(100dvh - 24px);border-radius:23px 23px 0 0;padding:0 16px calc(22px + env(safe-area-inset-bottom));overscroll-behavior:contain;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .tn19-order-detail .modal-head{position:sticky;top:0;z-index:2;background:#fff;min-width:0;padding:18px 0 13px;margin-bottom:12px;border-bottom:1px solid #e9f0eb}
+  .tn19-order-detail .modal-head>div{min-width:0}
+  .tn19-order-detail .modal-head h2{font-size:17px;overflow-wrap:anywhere}
+  .tn19-order-detail .modal-head>.btn{flex:0 0 auto;min-height:42px}
+  .tn19-order-detail .form-grid{grid-template-columns:minmax(0,1fr);gap:12px}
+  .tn19-order-detail .col-full{grid-column:1/-1}
+  .tn19-order-detail .soft-banner{overflow-wrap:anywhere;line-height:1.7;font-size:12px}
+  .tn19-order-detail .list-row{align-items:flex-start}
+  .tn19-order-detail .list-row>b{flex:0 0 auto;max-width:40%;text-align:right;overflow-wrap:anywhere}
+  .tn19-order-detail .inline-actions{gap:9px;align-items:stretch}
+  .tn19-order-detail .inline-actions .btn{flex:1 1 170px;min-height:48px;height:auto;white-space:normal;line-height:1.5;text-align:center}
+  .tn19-order-detail .field .input,.tn19-order-detail .field .select{font-size:16px!important;min-height:50px}
+}
+@media(max-width:370px){
+  .tn19-orders-panel{padding:13px 10px 17px}
+  .tn19-card-head{padding:13px 12px 12px}
+  .tn19-card-customer{padding:13px 12px 10px}
+  .tn19-card-meta{padding:0 12px 12px}
+  .tn19-card-finance{padding:11px 12px}
+  .tn19-card-actions{padding:11px 12px 13px}
+  .tn19-state{max-width:42%;font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.tn19-search-wrap{transition:none}}

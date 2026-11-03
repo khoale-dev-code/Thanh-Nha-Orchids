@@ -678,3 +678,193 @@ body{font-size:15px}
   .main-content:has(.tn14-dashboard-hero) .page-eyebrow { letter-spacing: .65px; }
 }
 /* TN DASHBOARD MOBILE V14 END */
+
+/* TN V17.1 MOBILE START */
+.products-cardlist{display:none}
+@media screen and (max-width:900px){
+  /* Keep a five-tab dock; menu drawer stays in the top bar. */
+  .mobile-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));position:fixed;left:12px;right:12px;bottom:calc(11px + env(safe-area-inset-bottom));z-index:22;gap:2px;padding:10px 8px 8px;border:1px solid #e6efe8;border-radius:24px;background:rgba(255,255,255,.97);box-shadow:0 12px 34px rgba(15,44,27,.14);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .mobile-nav a{flex:initial;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;min-height:58px;padding:0 2px;text-align:center;font-size:10px;font-weight:700;color:#83978c;border:0;border-radius:18px;background:transparent}
+  .mobile-nav a.active{color:#088b48}
+  .mobile-nav a .mobile-nav-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;transition:transform .18s ease,background .18s ease,color .18s ease}
+  .mobile-nav a.active .mobile-nav-icon{transform:translateY(-9px);color:white;background:#111c15;box-shadow:0 5px 16px rgba(0,0,0,.22)}
+  .mobile-nav a.active>span:last-child{margin-top:-5px}
+  .mobile-nav a>span:last-child{white-space:nowrap;max-width:100%;line-height:1.2}
+  .work-area{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+  .app-footer{padding-bottom:14px}
+  /* iOS Safari zooms text controls whose effective font is below 16px. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),textarea,select{font-size:16px!important}
+  .searchbox{min-height:52px;min-width:0;width:100%}
+  .searchbox input{font-size:16px!important;min-width:0;width:100%}
+}
+@media screen and (max-width:630px){
+  .products-desktop{display:none}
+  .products-cardlist{display:grid;gap:12px}
+  .products-cardlist .product-card{padding:14px;background:#fff;border:1px solid #e3ebe5;border-radius:16px;box-shadow:0 5px 18px rgba(16,49,28,.045);min-width:0}
+  .products-cardlist .product-card-head{display:flex;align-items:flex-start;gap:10px;min-width:0}
+  .products-cardlist .product-card-head .table-avatar{flex:0 0 36px;margin:0}
+  .products-cardlist .product-card-title{flex:1;min-width:0}
+  .products-cardlist .product-card-title strong{display:block;font-size:16px;line-height:1.4;overflow-wrap:anywhere}
+  .products-cardlist .product-card-title small{display:block;font-size:12px;color:#7a8b81;margin-top:4px;overflow-wrap:anywhere}
+  .products-cardlist .tag{align-self:flex-start;padding:6px 8px;font-size:10px;flex-shrink:0}
+  .products-cardlist .product-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid #ecf1ed;margin:13px 0 12px;padding-top:12px}
+  .products-cardlist .product-card-grid small{font-size:10px;color:#86978d;display:block;margin-bottom:4px}
+  .products-cardlist .product-card-grid b{font-size:12px;line-height:1.4;display:block;overflow-wrap:anywhere}
+  .products-cardlist .product-card-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .products-cardlist .product-card-actions .btn{flex:1 1 125px;min-width:0;white-space:normal;text-align:center;height:auto;min-height:42px}
+}
+@media screen and (max-width:360px){
+  .mobile-nav{left:8px;right:8px;padding:8px 6px 6px;bottom:calc(8px + env(safe-area-inset-bottom))}
+  .mobile-nav a{font-size:9px;gap:2px}
+  .mobile-nav a .mobile-nav-icon{width:34px;height:34px}
+  .products-cardlist .product-card-grid{grid-template-columns:1fr 1fr}
+}
+/* TN V17.1 MOBILE END */
+
+/* TN V17.2 SETTINGS AND MOBILE DOCK START */
+/* Isolated mobile-only layout correction. Does not alter saving logic. */
+@media screen and (max-width: 900px) {
+  /* Larger, centered five-tab dock with accessible touch targets. */
+  .mobile-nav {
+    position: fixed;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    left: 50%;
+    right: auto;
+    width: calc(100% - 20px);
+    max-width: 530px;
+    transform: translateX(-50%);
+    bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    height: 86px;
+    min-height: 86px;
+    box-sizing: border-box;
+    padding: 9px 9px 8px;
+    gap: 1px;
+    border-radius: 24px;
+    border: 1px solid #e2ede6;
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 15px 42px rgba(13, 53, 31, .16);
+    z-index: 22;
+    align-items: center;
+  }
+  .mobile-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-width: 0;
+    min-height: 64px;
+    border-radius: 17px;
+    padding: 0 2px;
+    color: #83978a;
+    font-size: 11px;
+    line-height: 1.15;
+    font-weight: 750;
+    text-align: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-nav .mobile-nav-icon {
+    display: grid;
+    place-items: center;
+    width: 43px;
+    height: 43px;
+    border-radius: 15px;
+    flex: 0 0 43px;
+  }
+  .mobile-nav .mobile-nav-icon svg {
+    width: 23px;
+    height: 23px;
+  }
+  .mobile-nav a.active .mobile-nav-icon {
+    transform: translateY(-8px);
+  }
+  .mobile-nav a.active span:last-child {
+    margin-top: -4px;
+  }
+  /* For installs where V17.1 was not yet applied, avoid a sixth dock item. */
+  .mobile-nav > button { display: none; }
+
+  /* 86px dock + 8px bottom + 14px separation = 108px. */
+  .tn5-settings {
+    padding-bottom: calc(205px + env(safe-area-inset-bottom, 0px));
+  }
+  .tn5-settings .tn5-savebar {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+    z-index: 23;
+    max-width: 660px;
+    margin-inline: auto;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 16px;
+  }
+  .tn5-settings .tn5-save-status {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .tn5-settings .tn5-save-button {
+    min-height: 50px;
+    padding: 11px 16px;
+    font-size: 14px;
+  }
+  .app-footer {
+    padding-bottom: calc(124px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media screen and (max-width: 380px) {
+  .mobile-nav { padding: 9px 5px 8px; }
+  .mobile-nav a { font-size: 10px; }
+  .mobile-nav .mobile-nav-icon { width: 40px; height: 40px; flex-basis: 40px; }
+  .tn5-settings .tn5-savebar { left: 8px; right: 8px; gap: 7px; }
+  .tn5-settings .tn5-save-button { font-size: 12px; padding-inline: 10px; }
+}
+/* Do not cover fields while the iOS keyboard is active. */
+@media screen and (max-width: 900px) {
+  .tn5-settings .tn5-settings-form:has(.tn5-input:focus) .tn5-savebar {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    max-width: none;
+    margin-top: 12px;
+    box-shadow: none;
+  }
+}
+@media screen and (max-width: 900px) and (max-height: 500px) {
+  .tn5-settings .tn5-savebar {
+    position: static;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    max-width: none;
+    margin-top: 12px;
+  }
+}
+/* TN V17.2 SETTINGS AND MOBILE DOCK END */
+
+/* TN V19 MOBILE INPUT FOCUS SAFETY START */
+@media screen and (max-width: 900px){
+  html body input:not([type]),
+  html body input[type="text"],
+  html body input[type="search"],
+  html body input[type="tel"],
+  html body input[type="email"],
+  html body input[type="password"],
+  html body input[type="number"],
+  html body input[type="url"],
+  html body input[type="date"],
+  html body input[type="time"],
+  html body textarea,
+  html body select,
+  html body .searchbox input{
+    font-size:16px!important;
+  }
+}
+/* TN V19 MOBILE INPUT FOCUS SAFETY END */
+
