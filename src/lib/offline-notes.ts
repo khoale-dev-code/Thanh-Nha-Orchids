@@ -1,0 +1,8 @@
+// IndexedDB keeps only non-sensitive draft notes. Never sync or place an order automatically.
+export interface OfflineNote {id:string;title:string;details:string;created_at:string}
+const DB='tn-family-offline-v7';const STORE='drafts';
+function connect():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{if(!('indexedDB'in window)){reject(new Error('Trình duyệt không hỗ trợ lưu bản nháp ngoại tuyến'));return;}const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE,{keyPath:'id'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function transact<T>(mode:IDBTransactionMode,act:(s:IDBObjectStore,done:(x:T)=>void)=>void):Promise<T>{const db=await connect();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,mode);let result:T;tx.oncomplete=()=>{db.close();resolve(result)};tx.onerror=()=>{db.close();reject(tx.error)};act(tx.objectStore(STORE),x=>{result=x})})}
+export async function listOfflineNotes(){return transact<OfflineNote[]>('readonly',(store,done)=>{const r=store.getAll();r.onsuccess=()=>done((r.result as OfflineNote[]).sort((a,b)=>b.created_at.localeCompare(a.created_at)))})}
+export async function saveOfflineNote(title:string,details:string){if(!title.trim())throw new Error('Hãy nhập tên ghi chú');if(title.length>130||details.length>1500)throw new Error('Ghi chú quá dài');const row:OfflineNote={id:crypto.randomUUID(),title:title.trim(),details:details.trim(),created_at:new Date().toISOString()};await transact<void>('readwrite',(store,done)=>{store.put(row);done()});return row}
+export async function removeOfflineNote(id:string){await transact<void>('readwrite',(store,done)=>{store.delete(id);done()})}

@@ -1,0 +1,64 @@
+/* V10.2: Live assistant, one clear workflow, touch-friendly UI. */
+.live-assistant-v2{display:grid;gap:18px;max-width:980px;margin:0 auto}
+.live-workspace,.live-review-section{min-width:0}
+.live-workspace-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.live-workspace-icon{display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;background:#e6f7ec;color:#008d4d;border-radius:14px}
+.live-workspace-top>div:nth-child(2){flex:1;min-width:0}
+.live-workspace h2,.live-review-head h2{font-size:20px;line-height:1.3;font-weight:800;margin:0;color:#173b29}
+.live-workspace-top p,.live-review-head p{margin:5px 0 0;color:#718478;font-size:13px;line-height:1.6}
+.live-workspace-count{flex-shrink:0;font-size:12px;color:#137a45;background:#ecf8ef;border:1px solid #d8eddf;border-radius:999px;padding:8px 12px;font-weight:800}
+.live-workspace-modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:5px;border-radius:15px;background:#f2f7f3;border:1px solid #e1ece4;margin-bottom:20px}
+.live-workspace-modes button{min-width:0;min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:11px;font-size:14px;font-weight:800;color:#63796a;cursor:pointer;background:transparent}
+.live-workspace-modes button.is-active{background:#fff;color:#008a4c;box-shadow:0 3px 13px #184c2712}
+.live-platform-line{display:grid;grid-template-columns:minmax(140px,210px) minmax(0,1fr);gap:14px;align-items:end;margin-bottom:18px}
+.live-platform-line>.field{min-width:0}
+.live-link-details{min-width:0}
+.live-link-details summary{cursor:pointer;font-size:13px;color:#52695a;font-weight:700;padding:8px 0}
+.live-link-input{display:flex;align-items:center;gap:8px}
+.live-link-input .input{flex:1;min-width:0}
+.live-link-invalid{color:#b14343;display:block;margin-top:6px}
+.live-primary-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.live-primary-actions .btn{min-height:46px}
+.live-start-help{font-size:13px;line-height:1.75;color:#5f7867;background:#f4faf5;border:1px solid #e1eee4;padding:16px;border-radius:13px}
+.live-video-stage{position:relative;overflow:hidden;border:2px solid #d8e9dd;border-radius:13px;touch-action:none;cursor:crosshair;user-select:none;background:#18311f}
+.live-video-feed{display:block;width:100%;height:auto;min-height:90px;pointer-events:none;object-fit:contain}
+.live-selection{position:absolute;border:3px solid #19bb68;background:rgba(22,185,103,.13);pointer-events:none;box-shadow:0 0 0 9999px rgba(2,18,10,.13);min-width:5px;min-height:5px}
+.live-selection span{position:absolute;top:0;left:0;transform:translateY(-100%);padding:4px 8px;font-weight:800;background:#13a95c;color:#fff;font-size:11px;white-space:nowrap;border-radius:7px 7px 0 0}
+.live-crop-controls{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin:11px 0 16px}
+.live-crop-controls>span{font-size:12px;color:#536d5a;flex:1;min-width:200px}
+.live-crop-controls>div{display:flex;gap:7px;flex-wrap:wrap}
+.live-crop-controls button{font-size:12px;border:1px solid #d5e4d9;background:#fff;color:#28643c;border-radius:8px;padding:8px 10px;cursor:pointer}
+.live-scan-feedback{display:flex;align-items:flex-start;gap:12px;background:#f4faf6;border:1px solid #dcece0;padding:14px;border-radius:13px;margin-top:12px}
+.live-scan-bullet{width:11px;height:11px;flex:0 0 11px;border-radius:50%;background:#b7c7bd;margin-top:5px}
+.live-scan-bullet.is-on{background:#11a05b;box-shadow:0 0 0 4px #ddf5e6}
+.live-scan-feedback>div:last-child{flex:1;min-width:0}
+.live-scan-feedback strong{font-size:14px;color:#254b33}
+.live-scan-feedback p{font-size:13px;color:#4f6d59;line-height:1.7;margin:4px 0}
+.live-scan-feedback small{display:block;color:#87978c;font-size:11px;margin-top:4px}
+.live-debug-details{margin-top:12px;background:#fbfdfb;border:1px solid #e2ece4;border-radius:12px;padding:12px}
+.live-debug-details summary{font-size:13px;cursor:pointer;color:#285b3b;font-weight:800}
+.live-debug-details p{margin:9px 0;color:#768e7b;font-size:12px;line-height:1.7}
+.live-crop-image{display:block;width:100%;max-height:440px;object-fit:contain;background:#f8faf8;border-radius:9px}
+.live-ocr-edit{width:100%;min-height:130px;margin-bottom:10px;font-size:14px}
+.live-paste-mode{display:grid;gap:12px}
+.live-paste-mode p{color:#627c69;font-size:13px;line-height:1.7}
+.live-paste-mode code{background:#f1f7f2;border-radius:4px;padding:2px 5px}
+.live-paste-mode textarea{min-height:170px;font-size:16px}
+.live-paste-mode .btn{justify-self:start;min-height:48px}
+.live-review-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.live-review-head h2 span{display:inline-grid;place-items:center;padding:3px 8px;font-size:13px;background:#e2f5e9;color:#09864a;border-radius:8px}
+.live-empty-v2{display:grid;justify-items:center;text-align:center;padding:32px 14px;gap:8px;border:1px dashed #d2e7d8;border-radius:14px;background:#f8fcf9;color:#779382}
+.live-empty-v2 b{color:#375a40;font-size:15px}
+.live-empty-v2 p{font-size:13px;line-height:1.7;max-width:480px}
+.live-review-list{display:grid;gap:14px}
+.live-order-candidate{display:grid;gap:12px;border:1px solid #d9e7dd;border-radius:15px;padding:16px;background:#fff}
+.live-order-top{display:flex;justify-content:space-between;align-items:start;gap:12px}
+.live-order-top strong{display:block;color:#234830;font-size:16px}
+.live-order-top small{display:block;margin-top:3px;color:#78917f;font-size:12px}
+.live-remove-v2{display:grid;place-items:center;width:38px;height:38px;background:#fff4f4;border-radius:10px;color:#b34d4d;cursor:pointer}
+.live-order-candidate blockquote{margin:0;background:#f2f9f4;border-left:3px solid #16a05a;border-radius:7px;padding:12px;color:#44614c;font-size:14px;line-height:1.65}
+.live-candidate-fields{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.live-privacy-note{display:flex;align-items:flex-start;gap:9px;font-size:12px;line-height:1.7;color:#748679;margin:0 0 20px}
+.live-privacy-note svg{flex:none;margin-top:2px}
+@media(max-width:690px){.live-platform-line{grid-template-columns:1fr}.live-workspace-top{flex-wrap:wrap}.live-workspace-count{margin-left:60px}.live-review-head{flex-direction:column}.live-video-feed{min-height:60px}.live-candidate-fields{grid-template-columns:1fr}.live-workspace h2,.live-review-head h2{font-size:18px}}
+@media(max-width:400px){.live-workspace-modes button{font-size:12px;gap:5px}.live-workspace-count{margin-left:0}.live-primary-actions .btn{width:100%;justify-content:center}}

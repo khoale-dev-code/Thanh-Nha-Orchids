@@ -1,0 +1,25 @@
+// Sanity tests for monetary calculation; runs after `npm install`.
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const path=require('node:path');
+const ts=require('typescript');
+const source=fs.readFileSync(path.join(__dirname,'../src/lib/math.ts'),'utf8');
+const compiled=ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.CommonJS}}).outputText;
+const module_={exports:{}};
+new Function('module','exports','require',compiled)(module_,module_.exports,require);
+const {buildLocalOrder,orderProfit,dailyReport,money}=module_.exports;
+const product={id:'product',active:true,tax_rate:10,name:'Hồ điệp',variants:[{id:'variant',active:true,label:'Hồng · Chậu nhỏ',sku:'HP-1',price:200000,cost_price:100000}]};
+const data={products:[product],customers:[],orders:[],settings:{}};
+const base={customer_id:null,customer_name:'Khách test',customer_phone:'',customer_address:'',recipient_province_code:'',recipient_district_code:'',recipient_ward_code:'',items:[{variant_id:'variant',quantity:1}],shipping_fee:30000,shipping_cost:25000,discount:10000,payment_method:'COD',payment_status:'unpaid',note:''};
+const order=buildLocalOrder(data,base);
+assert.equal(order.subtotal,200000,'subtotal');
+assert.equal(order.tax_total,19000,'tax after discount');
+assert.equal(order.total,239000,'total includes tax and shipping');
+assert.equal(order.cost_total,100000,'cogs snapshot');
+assert.equal(orderProfit(order),0,'unfulfilled orders are not counted');
+order.status='delivered';
+assert.equal(orderProfit(order),239000-19000-100000-25000,'delivered gross profit');
+assert.equal(dailyReport([order],'2000-01-01','2100-01-01')[0].revenue,220000,'revenue net of tax');
+assert.throws(()=>buildLocalOrder(data,{...base,discount:999999}),/Giảm giá vượt/);
+assert.throws(()=>buildLocalOrder(data,{...base,items:[]}),/ít nhất/);
+console.log('PASS: subtotal, discount, tax, cost, profit, report, invalid input');

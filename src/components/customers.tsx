@@ -1,0 +1,16 @@
+'use client';
+import {useMemo,useState} from 'react';
+import {Search,Plus,Users,Phone,MapPin,Edit3,Archive,ReceiptText} from 'lucide-react';
+import {Shell} from './shell';
+import {useStore} from '@/context/store';
+import {money} from '@/lib/math';
+import {CustomerEditor} from './editors';
+import type {Customer} from '@/lib/types';
+export function Customers(){const {data,archiveCustomer,busy}=useStore(),[filter,setFilter]=useState(''),[editing,setEditing]=useState<Customer|undefined|false>(false),[showArchived,setShowArchived]=useState(false);
+ const list=useMemo(()=>data.customers.filter(c=>(showArchived||c.active)&&`${c.name} ${c.phone} ${c.address}`.toLowerCase().includes(filter.toLowerCase())),[data.customers,filter,showArchived]);
+ return <Shell title="Khách hàng thân thiết" subtitle="Lưu một lần, lần sau chốt đơn chỉ cần chọn tên khách." action={<button onClick={()=>setEditing(undefined)} className="btn btn-primary"><Plus size={17}/> Thêm khách hàng</button>}>
+  <section className="panel"><div className="panel-head"><div><h2>Danh bạ khách hàng</h2><p>Quản lý thông tin và lịch sử mua hàng của từng người</p></div><span className="soft-tag"><Users size={15}/> {data.customers.filter(c=>c.active).length} khách</span></div><div style={{display:'flex',alignItems:'center',gap:14,flexWrap:'wrap',marginBottom:17}}><div className="searchbox" style={{flex:'1 1 240px'}}><Search size={17}/><input placeholder="Tìm tên, số điện thoại hoặc địa chỉ..." value={filter} onChange={e=>setFilter(e.target.value)}/></div><label style={{fontSize:11,display:'flex',gap:8,alignItems:'center',color:'#7d9081'}}><input type="checkbox" checked={showArchived} onChange={e=>setShowArchived(e.target.checked)}/> Hiện khách lưu trữ</label></div>
+   <div className="table-wrap"><table className="data-table"><thead><tr><th>HỌ VÀ TÊN</th><th>SỐ ĐIỆN THOẠI</th><th>ĐỊA CHỈ</th><th>SỐ ĐƠN</th><th>ĐÃ MUA (GẦN ĐÂY)</th><th>THAO TÁC</th></tr></thead><tbody>{list.map(c=>{const orders=data.orders.filter(o=>o.customer_id===c.id&&o.status!=='cancelled');return <tr key={c.id}><td><span className="table-avatar"><Users size={17}/></span><strong>{c.name}</strong>{!c.active&&<span className="tag status-red" style={{marginLeft:8}}>Đã lưu trữ</span>}</td><td>{c.phone||'–'}</td><td style={{maxWidth:235}}>{c.address||'–'}</td><td><strong>{orders.length}</strong></td><td><strong>{money(orders.reduce((s,o)=>s+o.total,0))}</strong></td><td><div className="inline-actions"><button className="icon-button" title="Sửa khách hàng" onClick={()=>setEditing(c)}><Edit3 size={16}/></button>{c.active&&<button className="icon-button" title="Lưu trữ khách" disabled={busy} onClick={async()=>{if(confirm(`Lưu trữ khách hàng ${c.name}?`))await archiveCustomer(c.id)}}><Archive size={16}/></button>}</div></td></tr>})}</tbody></table></div>{!list.length&&<div className="empty"><Users size={36}/><h3>Chưa có khách hàng phù hợp</h3><p>Thêm khách hàng để lần sau không phải nhập lại địa chỉ và số điện thoại.</p></div>}
+  </section><p className="hint" style={{marginTop:13}}>Cột số đơn và tổng mua được tính từ danh sách đơn đã tải. Ở chế độ Supabase, danh sách nhanh giới hạn 500 đơn gần nhất; báo cáo tổng hợp vẫn lấy từ SQL.</p>
+  {editing!==false&&<CustomerEditor current={editing||undefined} onClose={()=>setEditing(false)}/>}</Shell>;
+}

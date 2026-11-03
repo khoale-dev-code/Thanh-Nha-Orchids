@@ -1,0 +1,3 @@
+import type { NextConfig } from 'next';
+const config: NextConfig = { devIndicators: false, reactStrictMode: true, poweredByHeader: false };
+export default config;
