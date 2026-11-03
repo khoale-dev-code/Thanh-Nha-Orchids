@@ -77,6 +77,12 @@ export function SettingsPage(){
         <span className="tn5-environment"><span className="tn5-dot"/> {cloud?'Đồng bộ Supabase':'Dữ liệu demo trên máy'}</span>
       </div>
 
+      <nav className="tn13-mobile-links" aria-label="Đi nhanh đến nhóm cài đặt">
+        <a href="#thong-tin-cua-hang">Cửa hàng</a>
+        <a href="#thanh-toan">Thanh toán</a>
+        <a href="#tich-hop">Tích hợp</a>
+      </nav>
+
       <form className="tn5-settings-form" onSubmit={save}>
         <section className="tn5-section" id="thong-tin-cua-hang">
           <div className="tn5-section-head">

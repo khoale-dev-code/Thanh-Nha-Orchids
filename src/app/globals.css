@@ -506,3 +506,115 @@ body{font-size:15px}
 @media(max-width:380px){.bulk-fields{grid-template-columns:1fr}.bulk-result{align-items:flex-start;flex-direction:column}.bulk-mode-switch button{font-size:12px;padding:9px 6px}}
 /* Thanh Nha Carton Checkout V9 END */
 
+/* TN SETTINGS MOBILE V13 START */
+/* Mobile first correction for the existing V5 Settings UI. No checkout styles. */
+.tn13-mobile-links{display:none}
+@media (max-width:900px){
+  .tn5-settings{min-width:0;padding-bottom:102px}
+  .tn5-settings .tn5-settings-form{min-width:0}
+  .tn5-settings .tn5-savebar{
+    position:fixed;left:12px;right:12px;bottom:calc(64px + env(safe-area-inset-bottom,0px));
+    z-index:23;max-width:660px;margin-inline:auto;box-sizing:border-box;
+    border:1px solid #cce3d4;border-radius:16px;padding:10px 12px;
+    background:rgba(255,255,255,.97);box-shadow:0 9px 30px #193d2928;
+    display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px
+  }
+  .tn5-settings .tn5-save-status{min-width:0;line-height:1.45;font-size:12px}
+  .tn5-settings .tn5-save-status>span:last-child{overflow-wrap:anywhere}
+  .tn5-settings .tn5-save-button{min-height:48px;padding:11px 18px;font-size:14px}
+  /* An open mobile keyboard must not be overlapped by the fixed save button. */
+  .tn5-settings .tn5-settings-form:has(.tn5-input:focus) .tn5-savebar{
+    position:static;left:auto;right:auto;bottom:auto;width:100%;max-width:none;
+    box-shadow:none;margin-top:2px
+  }
+}
+@media (max-width:740px){
+  .main-content:has(.tn5-settings){min-width:0;padding:15px 12px 34px}
+  .main-content:has(.tn5-settings) .page-title-row{margin-bottom:11px}
+  .main-content:has(.tn5-settings) .page-eyebrow{display:none}
+  .main-content:has(.tn5-settings) .page-title-row h1{font-size:22px;letter-spacing:-.45px}
+  .main-content:has(.tn5-settings) .page-title-row p{font-size:12px;line-height:1.5;margin-top:3px}
+  .tn5-settings{gap:12px}
+  .tn5-intro{padding:11px 13px;gap:6px;border-radius:14px;background:#f1faf4;display:flex;align-items:center;flex-direction:row;flex-wrap:wrap}
+  .tn5-intro-brand{gap:11px;min-width:0;flex:1 1 170px}
+  .tn5-intro-brand>img{width:42px;height:42px;flex:0 0 42px;padding:3px;border-radius:11px}
+  .tn5-intro-brand strong{font-size:15px;line-height:1.35;overflow-wrap:anywhere}
+  .tn5-intro-brand p,.tn5-eyebrow{display:none}
+  .tn5-environment{font-size:10px;padding:6px 10px;white-space:normal;max-width:100%}
+  .tn13-mobile-links{display:flex;align-items:stretch;gap:8px;overflow-x:auto;overflow-y:hidden;
+    padding:1px 1px 7px;scrollbar-width:none;scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch}
+  .tn13-mobile-links::-webkit-scrollbar{display:none}
+  .tn13-mobile-links a{display:inline-flex;flex:1 0 auto;align-items:center;justify-content:center;
+    min-height:44px;scroll-snap-align:start;border-radius:11px;border:1px solid #dbe9df;
+    background:#fff;padding:8px 12px;font-size:12px;font-weight:750;color:#356146;
+    line-height:1.35;text-align:center;text-decoration:none}
+  .tn13-mobile-links a:first-child{background:#e9f7ef;border-color:#cfead9;color:#087b40}
+  .tn13-mobile-links a:focus-visible{outline:3px solid #62c592;outline-offset:2px}
+  .tn5-settings #thong-tin-cua-hang,.tn5-settings #thanh-toan,.tn5-settings #tich-hop{scroll-margin-top:125px}
+  .tn5-section{border-radius:15px;box-shadow:none;border-color:#e0eae3}
+  .tn5-section-head{display:grid;grid-template-columns:38px minmax(0,1fr);
+    align-items:start;column-gap:11px;row-gap:12px;padding:16px 14px 14px}
+  .tn5-section-head>div{min-width:0}
+  .tn5-icon{width:38px;height:38px;flex:none;border-radius:11px}
+  .tn5-section-head h2{font-size:16px;line-height:1.4}
+  .tn5-section-head p{font-size:12px;line-height:1.5;color:#698170}
+  .tn5-section-head .tn5-preset{grid-column:1/-1;min-height:46px;
+    width:100%;margin:0;white-space:normal;text-align:center;font-size:12px;
+    line-height:1.4;padding:11px 12px}
+  .tn5-section-head .tn5-state{grid-column:1/-1;justify-self:start;margin:0;
+    max-width:100%;white-space:normal;font-size:11px;line-height:1.4}
+  .tn5-section-body{padding:16px 14px}
+  .tn5-fields{display:grid;grid-template-columns:minmax(0,1fr);gap:15px}
+  .tn5-field,.tn5-field.tn5-span{grid-column:1/-1;font-size:13px;gap:7px}
+  .tn5-input,.tn5-money-wrap .tn5-input{display:block;box-sizing:border-box;
+    width:100%;min-width:0;height:52px;min-height:52px;border-radius:11px;
+    padding:12px 13px;font-size:16px!important}
+  .tn5-textarea{height:auto;min-height:94px;resize:vertical;overflow-wrap:break-word}
+  .tn5-money-wrap{min-width:0}
+  .tn5-money-wrap .tn5-input{padding-right:42px}
+  .tn5-contact-row{grid-template-columns:minmax(0,1fr);gap:8px;margin-top:16px}
+  .tn5-contact-link{min-height:50px;padding:10px 13px;gap:10px;font-size:13px;border-radius:11px}
+  .tn5-contact-link>span{overflow-wrap:anywhere}
+  .tn5-map-heading{flex-direction:column;align-items:stretch;gap:11px;margin-top:16px;padding-top:15px}
+  .tn5-map-heading strong{font-size:13px}
+  .tn5-map-heading p{font-size:11px}
+  .tn5-map-toggle{width:100%;min-height:46px;font-size:13px}
+  .tn5-map-preview{border-radius:12px}
+  .tn5-map-preview iframe{height:230px;max-width:100%}
+  .tn5-map-actions{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;padding:12px}
+  .tn5-map-actions span{overflow-wrap:anywhere;font-size:12px}
+  .tn5-map-actions button{min-height:42px;justify-content:center;border:1px solid #cce5d6;border-radius:9px;background:#fff}
+  .tn5-info-note{padding:12px;gap:10px;margin-top:16px}
+  .tn5-info-note p{font-size:12px;line-height:1.6}
+  .tn5-service-row{display:grid;grid-template-columns:38px minmax(0,1fr);
+    gap:10px 12px;align-items:start;padding:15px 14px}
+  .tn5-service-icon{width:38px;height:38px;flex:none;border-radius:10px}
+  .tn5-service-row>div{min-width:0;grid-column:2}
+  .tn5-service-row h3{font-size:13px}
+  .tn5-service-row p{font-size:12px;line-height:1.55}
+  .tn5-service-row>.tn5-service-note,.tn5-service-row>.tn5-state,.tn5-service-row>.tn5-secondary-button{
+    grid-column:2;margin:0;max-width:100%;min-width:0;width:100%;
+    justify-self:start;text-align:left;white-space:normal;overflow-wrap:anywhere}
+  .tn5-service-row>.tn5-secondary-button{min-height:44px}
+  .tn5-service-row>.tn5-service-note{padding:10px 11px;border-radius:10px;background:#f4faf6;color:#57715f}
+  .tn5-disclosure{border-radius:14px}
+  .tn5-disclosure>summary{display:grid;grid-template-columns:23px minmax(0,1fr) 19px;gap:9px;padding:15px 14px;align-items:center}
+  .tn5-disclosure>summary strong{font-size:14px}
+  .tn5-disclosure>summary span{grid-column:2;grid-row:2;order:0;margin:0;flex-basis:auto;line-height:1.5}
+  .tn5-disclosure>summary>svg:last-child{grid-column:3;grid-row:1}
+  .tn5-disclosure-content{padding:15px 14px}
+}
+@media (max-width:380px){
+  .tn5-intro{align-items:flex-start}
+  .tn5-environment{flex:1 0 100%;width:fit-content}
+  .tn5-settings .tn5-savebar{left:8px;right:8px;padding:9px;gap:6px}
+  .tn5-settings .tn5-save-status{font-size:11px;line-height:1.35}
+  .tn5-settings .tn5-save-button{font-size:12px;padding:10px 11px;min-height:46px}
+  .tn13-mobile-links a{padding:8px 11px}
+}
+@media (max-width:900px) and (max-height:500px){
+  .tn5-settings .tn5-savebar{position:sticky;left:auto;right:auto;bottom:calc(62px + env(safe-area-inset-bottom,0px))}
+}
+@media print{.tn13-mobile-links{display:none!important}}
+/* TN SETTINGS MOBILE V13 END */
