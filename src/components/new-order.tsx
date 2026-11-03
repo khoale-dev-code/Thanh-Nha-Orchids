@@ -8,6 +8,7 @@ import {money,safeNonNeg,variantsOf} from '@/lib/math';
 import type {OrderDraft,CartonOrderDraft} from '@/lib/types';
 import {listPendingLeads,finishLead,type LeadRow} from '@/lib/family-operations';
 import {CheckoutCustomerV11,type CustomerSource} from './checkout-customer-v11';
+import {allCustomerPhones,allCustomerAddresses,matchingCustomer,normalizeCustomerPhone} from '@/lib/customer-directory-v16';
 import {CustomerEditor,ProductEditor} from './editors';
 import {PosMoneyInput} from './pos-money-input';
 
@@ -28,6 +29,8 @@ export function NewOrder(){
   const [guestName,setGuestName]=useState('');
   const [guestPhone,setGuestPhone]=useState('');
   const [guestAddress,setGuestAddress]=useState('');
+  const [savedPhone,setSavedPhone]=useState('');
+  const [savedAddress,setSavedAddress]=useState('');
   const [rememberContact,setRememberContact]=useState(true);
   const [pendingLeads,setPendingLeads]=useState<LeadRow[]>([]);
   const [selectedLead,setSelectedLead]=useState<LeadRow|null>(null);
@@ -51,6 +54,7 @@ export function NewOrder(){
     setSelectedLead(lead);
     setCustomerSource(lead.platform==='TikTok'?'tiktok':lead.platform==='Facebook'?'facebook':'walkin');
     setCustomerId('');
+    setSavedPhone('');setSavedAddress('');
     setGuestName(lead.customer_name==='Khách livestream'?'':lead.customer_name);
     setGuestPhone(lead.customer_phone||'');
     setGuestAddress(lead.customer_address||'');
@@ -88,6 +92,7 @@ export function NewOrder(){
   const changeSource=(next:CustomerSource)=>{
     setCustomerSource(next);
     setCustomerId('');
+    setSavedPhone('');setSavedAddress('');
     setSelectedLead(null);
     setSubmitKey(crypto.randomUUID());
     setSavedContactId('');
@@ -149,8 +154,8 @@ export function NewOrder(){
     if(createdOrderId){setError('Đơn đã được tạo. Không bấm chốt lần hai; hãy mở hóa đơn đã tạo.');return;}
     const fromSocial=customerSource==='facebook'||customerSource==='tiktok';
     const name=customerSource==='saved'?selected?.name?.trim()||'':guestName.trim();
-    const phone=customerSource==='saved'?selected?.phone?.trim()||'':guestPhone.trim();
-    const address=customerSource==='saved'?selected?.address?.trim()||'':guestAddress.trim();
+    const phone=customerSource==='saved'?(savedPhone||selected?.phone?.trim()|| (selected?allCustomerPhones(selected)[0]:'') ||''):guestPhone.trim();
+    const address=customerSource==='saved'?(savedAddress||selected?.address?.trim()||(selected?allCustomerAddresses(selected)[0]:'')||''):guestAddress.trim();
     if(customerSource==='saved'&&!selected){setError('Hãy chọn một khách đã lưu.');return;}
     if(fromSocial&&!name){setError('Hãy nhập tên khách Facebook/TikTok.');return;}
     if(!isCounter&&(!name||!phone||!address)){
@@ -168,9 +173,15 @@ export function NewOrder(){
     try{
       let resolvedCustomerId=customerSource==='saved'?selected?.id||null:null;
       if(fromSocial&&rememberContact&&name&&phone){
-        const normalized=phone.replace(/\D/g,'');
-        const known=data.customers.find(c=>c.active&&c.phone.replace(/\D/g,'')===normalized);
-        if(known)resolvedCustomerId=known.id;
+        const normalized=normalizeCustomerPhone(phone);
+        const known=matchingCustomer(data.customers,phone);
+        if(known){
+          resolvedCustomerId=known.id;
+          const existingAddresses=allCustomerAddresses(known);
+          if(address && !existingAddresses.some(x=>x.toLocaleLowerCase('vi-VN')===address.toLocaleLowerCase('vi-VN'))){
+            await saveCustomer({...known,address:known.address||address,delivery_addresses:known.address?[...(known.delivery_addresses||[]),{id:crypto.randomUUID(),label:'Địa chỉ livestream',value:address}]:(known.delivery_addresses||[])});
+          }
+        }
         else if(savedContactId&&savedContactPhone===normalized)resolvedCustomerId=savedContactId;
         else{
           const added=await saveCustomer({id:'',name,phone,address,province_code:'',district_code:'',ward_code:'',notes:`Khách từ ${sourceLabel}`,active:true});
@@ -184,9 +195,9 @@ export function NewOrder(){
         customer_name:name||'Khách lẻ',
         customer_phone:phone,
         customer_address:isCounter?'':address,
-        recipient_province_code:isCounter?'':(selected?.province_code||''),
-        recipient_district_code:isCounter?'':(selected?.district_code||''),
-        recipient_ward_code:isCounter?'':(selected?.ward_code||''),
+        recipient_province_code:isCounter||address!==(selected?.address||'')?'':(selected?.province_code||''),
+        recipient_district_code:isCounter||address!==(selected?.address||'')?'':(selected?.district_code||''),
+        recipient_ward_code:isCounter||address!==(selected?.address||'')?'':(selected?.ward_code||''),
         items:unitMode==='carton'&&selectedCarton?[{variant_id:selectedCarton.v.id,quantity:totalPlants}]:cart.map(x=>({variant_id:x.id,quantity:x.qty})),
         shipping_fee:isCounter?0:safeNonNeg(sf),
         shipping_cost:isCounter?0:safeNonNeg(shippingCost),
@@ -268,7 +279,11 @@ export function NewOrder(){
           source={customerSource}
           onSourceChange={changeSource}
           customerId={customerId}
-          onCustomerIdChange={setCustomerId}
+          onCustomerIdChange={id=>{setCustomerId(id);setSavedPhone('');setSavedAddress('');}}
+          selectedPhone={savedPhone}
+          onSelectedPhoneChange={setSavedPhone}
+          selectedAddress={savedAddress}
+          onSelectedAddressChange={setSavedAddress}
           guestName={guestName}
           onGuestNameChange={setGuestName}
           guestPhone={guestPhone}
@@ -313,7 +328,7 @@ export function NewOrder(){
         <p className="hint" style={{textAlign:'center',marginTop:10}}>Sau khi chốt sẽ mở phiếu 80mm để in hoặc gửi ảnh.</p>
       </section></div>
     </div>
-    {showCustomer&&<CustomerEditor onClose={()=>setShowCustomer(false)} onSaved={c=>{setCustomerSource('saved');setSelectedLead(null);setCustomerId(c.id);setSubmitKey(crypto.randomUUID());}}/>}
+    {showCustomer&&<CustomerEditor onClose={()=>setShowCustomer(false)} onSaved={c=>{setCustomerSource('saved');setSelectedLead(null);setCustomerId(c.id);setSavedPhone('');setSavedAddress('');setSubmitKey(crypto.randomUUID());}}/>}
     {showProduct&&<ProductEditor onClose={()=>setShowProduct(false)}/>}
   </Shell>;
 }

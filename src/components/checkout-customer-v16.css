@@ -1,0 +1,4 @@
+.tn16-saved-recipient{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0}
+.tn16-saved-recipient .select{font-size:16px!important;min-width:0;max-width:100%;text-overflow:ellipsis}
+.tn16-saved-recipient .pos-selected-customer{display:flex;flex-wrap:wrap;gap:7px 12px}
+.tn16-saved-recipient .pos-contact-tip{margin:0}

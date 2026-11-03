@@ -1,0 +1,58 @@
+/* V16 customer directory: responsive cards and 16px iOS inputs, no auto-zoom. */
+.tn16-directory{min-width:0;max-width:100%;overflow:hidden}
+.tn16-panel-head{flex-wrap:wrap}
+.tn16-panel-head>div{min-width:0;flex:1}
+.tn16-panel-head .soft-tag{white-space:nowrap}
+.tn16-toolbar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.tn16-search{flex:1 1 260px;min-width:0;max-width:100%;height:52px}
+.tn16-search input{font-size:16px!important;line-height:1.4;min-width:0;max-width:100%;-webkit-text-size-adjust:100%}
+.tn16-check{display:flex;align-items:center;gap:8px;flex-shrink:0;color:#607b68;font-size:13px}
+.tn16-check input{width:20px;height:20px;accent-color:#0a9952}
+.tn16-message{margin:0 0 15px;overflow-wrap:anywhere}
+.tn16-duplicates{border:1px solid #f1dca2;background:#fffaf0;border-radius:15px;padding:14px;margin:0 0 20px}
+.tn16-duplicate-title{display:flex;gap:9px;align-items:center;color:#956316;font-size:14px}
+.tn16-duplicates>p{font-size:12px;color:#76613d;line-height:1.6;margin:8px 0 12px}
+.tn16-duplicate-row{border-top:1px solid #f3e5c7;padding:12px 0;display:flex;align-items:start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.tn16-duplicate-row>div:first-child{min-width:0;flex:1}
+.tn16-duplicate-row strong,.tn16-duplicate-row small{display:block;overflow-wrap:anywhere}
+.tn16-duplicate-row small{font-size:12px;color:#6b6958;margin-top:4px}
+.tn16-merge-actions{display:flex;gap:8px;flex-wrap:wrap}
+.tn16-merge-actions button{display:inline-flex;align-items:center;gap:6px;padding:9px 10px;border-radius:9px;background:#fff;border:1px solid #ddc792;color:#754f14;font-size:12px;font-weight:750}
+.tn16-merge-actions button:disabled{opacity:.5}
+.tn16-actions{display:flex;gap:6px;flex-wrap:wrap}
+.tn16-mini-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:1px solid #d5e9d9;border-radius:10px;background:#f0f9f3;color:#137b44;padding:9px 11px;font-size:12px;font-weight:800;white-space:nowrap;min-height:39px}
+.tn16-mini-muted{background:#fff;color:#697b6b;border-color:#e1e9e2}
+.tn16-mini-btn:disabled{opacity:.5}
+.tn16-secondary{display:block;color:#778a7d;margin-top:5px;font-size:11px}
+.tn16-address-cell{max-width:240px;overflow-wrap:anywhere}
+.tn16-desktop-table .data-table{min-width:730px}
+.tn16-cards{display:none}
+@media(max-width:740px){
+ .tn16-directory{padding:14px!important;border-radius:17px}
+ .tn16-panel-head{align-items:flex-start!important}
+ .tn16-panel-head h2{font-size:17px}
+ .tn16-panel-head p{line-height:1.5}
+ .tn16-toolbar{display:grid;grid-template-columns:minmax(0,1fr);gap:13px}
+ .tn16-search{width:100%;flex:auto}
+ .tn16-check{font-size:13px}
+ .tn16-desktop-table{display:none}
+ .tn16-cards{display:grid;gap:12px;min-width:0}
+ .tn16-card{border:1px solid #e3eee7;border-radius:16px;padding:14px;background:#fff;min-width:0;overflow-wrap:anywhere}
+ .tn16-card-head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:13px}
+ .tn16-avatar{width:39px;height:39px;display:grid;place-items:center;flex-shrink:0;border-radius:12px;background:#eaf7ee;color:#07854b}
+ .tn16-card-name{flex:1;min-width:105px}
+ .tn16-card-name strong{display:block;font-size:15px;line-height:1.4}
+ .tn16-card-name small{display:block;font-size:11px;color:#7c9082;margin-top:3px}
+ .tn16-card-head .tn16-actions{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .tn16-card-head .tn16-actions button{min-width:0}
+ .tn16-card-detail{display:flex;gap:10px;align-items:flex-start;padding:8px 0;color:#3a5341;font-size:13px;line-height:1.6}
+ .tn16-card-detail>svg{flex:0 0 16px;margin-top:2px;color:#198b53}
+ .tn16-card-detail>span{min-width:0;overflow-wrap:anywhere}
+ .tn16-card-detail small{display:block;color:#738a77}
+ .tn16-card-stats{border-top:1px solid #edf2ee;padding-top:12px;margin-top:10px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:11px;color:#7c8c7c}
+ .tn16-card-stats strong{color:#16693e;font-size:13px}
+ .tn16-duplicate-row{display:grid;grid-template-columns:minmax(0,1fr)}
+ .tn16-merge-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+ .tn16-merge-actions button{white-space:normal;line-height:1.3;justify-content:center;min-width:0}
+}
+@media(max-width:360px){.tn16-card{padding:12px}.tn16-panel-head .soft-tag{font-size:10px}.tn16-mini-btn{padding:8px}}

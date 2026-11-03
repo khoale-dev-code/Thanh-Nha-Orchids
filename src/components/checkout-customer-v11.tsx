@@ -3,7 +3,9 @@ import {Facebook,RefreshCw,UserRoundPlus,Users,Video,ShoppingBasket} from 'lucid
 import type {Customer} from '@/lib/types';
 import type {LeadRow} from '@/lib/family-operations';
 import './checkout-customer-v11.css';
+import './checkout-customer-v16.css';
 import {DeliveryAddressV15} from './delivery-address-v15';
+import {allCustomerPhones,allCustomerAddresses} from '@/lib/customer-directory-v16';
 
 export type CustomerSource='walkin'|'facebook'|'tiktok'|'saved';
 const sources:{id:CustomerSource;label:string;help:string}[]=[
@@ -15,6 +17,8 @@ const sources:{id:CustomerSource;label:string;help:string}[]=[
 type Props={
  customers:Customer[];source:CustomerSource;onSourceChange:(v:CustomerSource)=>void;
  customerId:string;onCustomerIdChange:(v:string)=>void;
+ selectedPhone:string;onSelectedPhoneChange:(v:string)=>void;
+ selectedAddress:string;onSelectedAddressChange:(v:string)=>void;
  guestName:string;onGuestNameChange:(v:string)=>void;
  guestPhone:string;onGuestPhoneChange:(v:string)=>void;
  guestAddress:string;onGuestAddressChange:(v:string)=>void;
@@ -37,13 +41,30 @@ export function CheckoutCustomerV11(p:Props){
        <strong>{s.label}</strong><small>{s.help}</small>
      </button>)}
    </div>
-   {p.source==='saved'?<label className="field pos-contact-field">Chọn khách trong danh bạ
-     <select className="select" value={p.customerId} onChange={e=>p.onCustomerIdChange(e.target.value)}>
-       <option value="">Chọn khách hàng...</option>
-       {p.customers.filter(c=>c.active).map(c=><option key={c.id} value={c.id}>{c.name}{c.phone?` • ${c.phone}`:''}</option>)}
-     </select>
-     {selected&&<div className="pos-selected-customer"><strong>{selected.name}</strong><span>{selected.phone||'Chưa có SĐT'}</span><span>{selected.address||'Chưa có địa chỉ'}</span></div>}
-   </label>:<div className="pos-customer-detail-grid">
+   {p.source==='saved'?<div className="tn16-saved-recipient">
+     <label className="field pos-contact-field">Chọn khách trong danh bạ
+       <select className="select" value={p.customerId} onChange={e=>p.onCustomerIdChange(e.target.value)}>
+         <option value="">Chọn khách hàng...</option>
+         {p.customers.filter(c=>c.active).map(c=><option key={c.id} value={c.id}>{c.name}{c.phone?` • ${c.phone}`:''}</option>)}
+       </select>
+     </label>
+     {selected&&<>
+       <div className="pos-selected-customer"><strong>{selected.name}</strong><span>{allCustomerPhones(selected).length} số liên hệ · {allCustomerAddresses(selected).length} địa chỉ</span></div>
+       <label className="field pos-contact-field">Số điện thoại dùng cho đơn này
+         <select className="select" value={p.selectedPhone} onChange={e=>p.onSelectedPhoneChange(e.target.value)}>
+           <option value="">{selected.phone||allCustomerPhones(selected)[0]||'Chưa có số liên hệ'} (mặc định)</option>
+           {allCustomerPhones(selected).map(x=><option value={x} key={x}>{x}</option>)}
+         </select>
+       </label>
+       {!p.isCounter&&<label className="field pos-contact-field">Giao đến địa chỉ
+         <select className="select" value={p.selectedAddress} onChange={e=>p.onSelectedAddressChange(e.target.value)}>
+           <option value="">{selected.address||allCustomerAddresses(selected)[0]||'Chưa có địa chỉ'} (mặc định)</option>
+           {allCustomerAddresses(selected).map(x=><option key={x} value={x}>{x}</option>)}
+         </select>
+       </label>}
+       <p className="pos-contact-tip">Chọn số và địa chỉ cho lần giao này, không thay đổi thông tin trên hóa đơn cũ.</p>
+     </>}
+   </div>:<div className="pos-customer-detail-grid">
        <label className="field pos-contact-field">Tên khách hàng {social&&<b>*</b>}
          <input className="input" value={p.guestName} onChange={e=>p.onGuestNameChange(e.target.value)} maxLength={120} placeholder={social?'Tên Facebook/TikTok của khách':'Khách lẻ (không bắt buộc tại quầy)'}/>
        </label>
