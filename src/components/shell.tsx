@@ -2,9 +2,9 @@
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {useState} from 'react';
-import {Radio,LayoutDashboard,ShoppingBag,PlusCircle,Users,Flower2,ChartColumnIncreasing,Settings,BookOpen,Menu,X,LogOut,Wifi,CheckCircle2,ChevronRight,ArrowRight,RefreshCw} from 'lucide-react';
+import {Radio,ReceiptText,LayoutDashboard,ShoppingBag,PlusCircle,Users,Flower2,ChartColumnIncreasing,Settings,BookOpen,Menu,X,LogOut,Wifi,CheckCircle2,ChevronRight,ArrowRight,RefreshCw} from 'lucide-react';
 import {useStore} from '@/context/store';
-const menus=[{href:'/',label:'Tổng quan',Icon:LayoutDashboard},{href:'/new-order',label:'Chốt đơn',Icon:PlusCircle},{href:'/orders',label:'Đơn hàng',Icon:ShoppingBag},{href:'/customers',label:'Khách hàng',Icon:Users},{href:'/products',label:'Sản phẩm',Icon:Flower2},{href:'/reports',label:'Báo cáo',Icon:ChartColumnIncreasing},{href:'/operations',label:'Sổ vận hành',Icon:BookOpen},{href:'/live-assistant',label:'Robot livestream',Icon:Radio},{href:'/settings',label:'Cài đặt',Icon:Settings}];
+const menus=[{href:'/',label:'Tổng quan',Icon:LayoutDashboard},{href:'/new-order',label:'Chốt đơn',Icon:PlusCircle},{href:'/orders',label:'Đơn hàng',Icon:ShoppingBag},{href:'/customers',label:'Khách hàng',Icon:Users},{href:'/products',label:'Sản phẩm',Icon:Flower2},{href:'/reports',label:'Báo cáo',Icon:ChartColumnIncreasing},{href:'/operations',label:'Sổ vận hành',Icon:BookOpen},{href:'/live-notes',label:'In note LIVE',Icon:ReceiptText},{href:'/live-assistant',label:'Robot livestream',Icon:Radio},{href:'/settings',label:'Cài đặt',Icon:Settings}];
 const mobile=menus.slice(0,5);
 export function Shell({title,subtitle,children,action}:{title:string;subtitle?:string;children:React.ReactNode;action?:React.ReactNode}){
  const pathname=usePathname(),[drawer,setDrawer]=useState(false);

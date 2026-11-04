@@ -188,6 +188,7 @@ export function LiveAssistant(){
  const changePlatform=(v:Platform)=>{stop();setPlatform(v);setItems([]);seenRef.current.clear();setCrop(RIGHT);};
  if(!ready||unauthorized||(cloud&&!email))return <Shell title="Trợ lý livestream"><p>Đang xác minh quyền truy cập...</p></Shell>;
  return <Shell title="Robot livestream" subtitle="Đọc bình luận, gợi ý đơn và kiểm tra trước khi ghi nhận.">
+  <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:12,flexWrap:'wrap',padding:'12px 15px',marginBottom:14,background:'#ecf9f0',border:'1px solid #d7e9dd',borderRadius:14}}><span style={{fontSize:12,color:'#2c6945',lineHeight:1.65}}>Có khách vừa chốt? Ghi tên và in note nhỏ để kẹp vào hàng, không cần API Facebook/TikTok.</span><Link href="/live-notes" className="btn btn-primary" style={{minHeight:43}}>In note thủ công</Link></div>
   <div className="live-assistant-v2">
    <section className="panel live-workspace">
     <div className="live-workspace-top"><div className="live-workspace-icon"><Radio size={22}/></div><div><h2>Nhận đơn khi đang LIVE</h2><p>Chọn cách lấy bình luận, robot sẽ lọc câu chốt hàng vào danh sách chờ.</p></div><span className="live-workspace-count">{items.length} chờ duyệt</span></div>
