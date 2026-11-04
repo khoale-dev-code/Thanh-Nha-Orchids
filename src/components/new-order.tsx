@@ -11,6 +11,7 @@ import {CheckoutCustomerV11,type CustomerSource} from './checkout-customer-v11';
 import {allCustomerPhones,allCustomerAddresses,matchingCustomer,normalizeCustomerPhone} from '@/lib/customer-directory-v16';
 import {CustomerEditor,ProductEditor} from './editors';
 import {PosMoneyInput} from './pos-money-input';
+import './checkout-mobile-v20.css';
 
 type SaleMode='delivery'|'instore';
 
@@ -24,6 +25,7 @@ export function NewOrder(){
   const [unitsPerCarton,setUnitsPerCarton]=useState(100);
   const [pricePerCarton,setPricePerCarton]=useState(0);
   const [search,setSearch]=useState('');
+  const [mobileStep,setMobileStep]=useState<1|2|3>(1);
   const [customerId,setCustomerId]=useState('');
   const [customerSource,setCustomerSource]=useState<CustomerSource>('walkin');
   const [guestName,setGuestName]=useState('');
@@ -52,6 +54,7 @@ export function NewOrder(){
 
   const selectLead=(lead:LeadRow)=>{
     setSelectedLead(lead);
+    setMobileStep(2);
     setCustomerSource(lead.platform==='TikTok'?'tiktok':lead.platform==='Facebook'?'facebook':'walkin');
     setCustomerId('');
     setSavedPhone('');setSavedAddress('');
@@ -229,7 +232,46 @@ export function NewOrder(){
     }
   };
 
+  const goMobileStep=(step:1|2|3)=>{
+    setError('');
+    if(step>1 && !hasProducts){setError('Hãy chọn sản phẩm trước khi tiếp tục.');return;}
+    if(step>1 && !bulkIsValid){setError('Kiểm tra lại số thùng, số cây, giá sỉ và tồn kho.');return;}
+    if(step===3){
+      if(customerSource==='saved'&&!selected){setError('Hãy chọn khách trong danh bạ.');return;}
+      const name=customerSource==='saved'?(selected?.name||'').trim():guestName.trim();
+      const phone=customerSource==='saved'?(savedPhone||selected?.phone||allCustomerPhones(selected!)[0]||'').trim():guestPhone.trim();
+      const address=customerSource==='saved'?(savedAddress||selected?.address||allCustomerAddresses(selected!)[0]||'').trim():guestAddress.trim();
+      if((customerSource==='facebook'||customerSource==='tiktok')&&!name){setError('Hãy nhập tên khách Facebook hoặc TikTok.');return;}
+      if(!isCounter&&(!name||!phone||!address)){setError('Đơn giao hàng cần đủ tên, số điện thoại và địa chỉ nhận hàng.');return;}
+      const digits=phone.replace(/\D/g,'');
+      if(phone && (!/^[+0-9().\s-]+$/.test(phone)||digits.length<9||digits.length>12)){
+        setError('Số điện thoại cần có từ 9 đến 12 chữ số.');return;
+      }
+    }
+    setMobileStep(step);
+    if(typeof window!=='undefined')window.requestAnimationFrame(()=>document.getElementById('tn20-checkout')?.scrollIntoView({behavior:'smooth',block:'start'}));
+  };
+  const mobileQuantity=unitMode==='carton'?(selectedCarton?totalPlants:0):cart.reduce((sum,item)=>sum+item.qty,0);
   return <Shell title="Chốt đơn hàng mới" subtitle="Bán trực tiếp hoặc giao tận nhà. Chọn hàng, hệ thống tự tính và xuất hóa đơn.">
+    <div className="tn20-checkout" id="tn20-checkout" data-mobile-step={mobileStep}>
+      <header className="tn20-mobile-header">
+        <div className="tn20-mobile-eyebrow"><Flower2 size={15}/> VƯỜN LAN THANH NHÃ <span>·</span> BÁN HÀNG</div>
+        <div className="tn20-mobile-headline">
+          <div><h2>{mobileStep===1?'Chọn hoa, thêm vào giỏ':mobileStep===2?'Thông tin người nhận':'Kiểm tra và chốt đơn'}</h2><p>{mobileStep===1?'Tìm sản phẩm và chọn quy cách bán.':mobileStep===2?'Chọn khách và kiểm tra thông tin giao hàng.':'Xác nhận tiền hàng, vận chuyển và thanh toán.'}</p></div>
+          <div className="tn20-mobile-bag"><ShoppingBag size={17}/><b>{mobileQuantity}</b><small>cây</small></div>
+        </div>
+        <nav className="tn20-mobile-steps" aria-label="Các bước chốt đơn">
+          {([['1','Hàng bán'],['2','Khách nhận'],['3','Thanh toán']] as const).map(([num,label])=>{
+            const step=Number(num) as 1|2|3;
+            return <button type="button" key={num} className={`tn20-step ${mobileStep===step?'is-current':''} ${mobileStep>step?'is-done':''}`} aria-current={mobileStep===step?'step':undefined} onClick={()=>goMobileStep(step)}>
+              <span className="tn20-step-number">{mobileStep>step?<CheckCircle2 size={16}/>:num}</span><span>{label}</span>
+            </button>;
+          })}
+        </nav>
+        <div className="tn20-mobile-sum"><span>{isCounter?'Tại quầy':'Giao hàng'} <i/> {unitMode==='carton'?'Bán thùng':'Bán lẻ'}</span><strong>{money(total)}</strong></div>
+        {error&&mobileStep<3&&<p className="tn20-mobile-error" role="alert">{error}</p>}
+      </header>
+      <div className="tn20-sale-tools">
     <section className="sale-mode-section" aria-label="Hình thức bán hàng">
       <div className="sale-mode-title">Hình thức bán hàng <span>Chọn trước khi chốt đơn</span></div>
       <div className="sale-mode-selector" role="group" aria-label="Chọn hình thức bán hàng">
@@ -250,15 +292,17 @@ export function NewOrder(){
         <button className={unitMode==='carton'?'selected':''} aria-pressed={unitMode==='carton'} onClick={()=>{setUnitMode('carton');setError('');}}>Bán sỉ theo thùng</button>
       </div>
     </section>
+      </div>
     <div className="order-layout">
-      <section className="panel">
+      <section className="panel tn20-product-panel">
         <div className="panel-head"><div><h2><span className="badge-number" style={{display:'inline-grid',marginRight:8}}>1</span> Chọn sản phẩm</h2><p>{unitMode==='carton'?'Chọn một biến thể để đóng thùng':'Chạm vào sản phẩm để thêm vào đơn'}</p></div><button className="btn btn-soft btn-sm" onClick={()=>setShowProduct(true)}><PackagePlus size={16}/> Thêm nhanh</button></div>
         <div className="searchbox"><Search size={18}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Tìm tên, màu hoa, kích thước hoặc mã..." aria-label="Tìm sản phẩm"/></div>
         <div className="product-choice-grid">{foundItems.slice(0,60).map(({product:p,variant:v})=><button className="product-choice" key={v.id} disabled={v.stock_quantity===0} onClick={()=>unitMode==='carton'?pickCarton(v.id):add(v.id)} aria-pressed={unitMode==='carton'&&cartonVariantId===v.id}><span className="flower-square"><Flower2 size={21}/></span><span style={{minWidth:0,flex:1}}><strong>{p.name}</strong><small>{v.label} {v.stock_quantity!==null?`• Còn ${v.stock_quantity}`:''}</small><b>{v.stock_quantity===0?'Hết hàng':money(v.price)}</b></span><Plus className="add-icon" size={18}/></button>)}</div>
         {!foundItems.length&&<div className="empty"><Flower2 size={36}/><h3>Chưa tìm thấy sản phẩm</h3><p>Chọn “Thêm nhanh” để tạo sản phẩm mà không rời màn hình chốt đơn.</p></div>}
       </section>
 
-      <div className="checkout-sticky"><section className="panel">
+      <div className="checkout-sticky"><section className="panel tn20-order-panel">
+        <div className="tn20-cart-block">
         <div className="panel-head"><div><h2><span className="badge-number" style={{display:'inline-grid',marginRight:8}}>2</span> {unitMode==='carton'?'Thông tin thùng hàng':'Giỏ hàng'}</h2><p>{unitMode==='carton'?`${totalPlants.toLocaleString('vi-VN')} cây trong ${cartonCount} thùng`:`${cart.reduce((s,x)=>s+x.qty,0)} sản phẩm trong đơn`}</p></div><ShoppingBag color="#009d4b" size={20}/></div>
         {unitMode==='carton'?<div className="bulk-carton-editor">
           {!selectedCarton?<p className="bulk-empty">Chọn một sản phẩm bên trái để bắt đầu bán theo thùng.</p>:<>
@@ -273,7 +317,8 @@ export function NewOrder(){
             <p className="bulk-stock-hint">Giá mặc định tính theo giá lẻ. Bạn có thể giảm giá theo thùng; giá chốt không được cao hơn giá lẻ tương ứng ở V9.</p>
           </>}
         </div>:!chosen.length?<div className="empty" style={{padding:20}}><ShoppingBag size={35}/><h3>Chưa có sản phẩm</h3><p>Chạm vào một sản phẩm để thêm vào giỏ.</p></div>:chosen.map(({p,v,qty})=><div key={v.id} className="cart-line"><span className="flower-square"><Flower2 size={19}/></span><span className="cart-info"><strong>{p.name}</strong><small>{v.label} · {money(v.price)}</small></span><div className="qty-control"><button aria-label={`Giảm ${p.name}`} onClick={()=>change(v.id,-1)}><Minus size={14}/></button><strong>{qty}</strong><button aria-label={`Tăng ${p.name}`} disabled={v.stock_quantity!==null&&qty>=v.stock_quantity} onClick={()=>change(v.id,1)}><Plus size={14}/></button></div></div>)}
-        <div className="divider"/>
+        </div>
+        <div className="tn20-customer-block">
         <CheckoutCustomerV11
           customers={data.customers}
           source={customerSource}
@@ -300,7 +345,13 @@ export function NewOrder(){
           onAddCustomer={()=>setShowCustomer(true)}
           isCounter={isCounter}
         />
-        <div className="divider"/>
+        </div>
+        <div className="tn20-payment-block">
+          <div className="tn20-review-brief">
+            <div className="tn20-review-eyebrow">TRƯỚC KHI XÁC NHẬN</div>
+            <div className="tn20-review-line"><span>Hàng bán</span><strong>{unitMode==='carton'?`${cartonCount} thùng · ${totalPlants.toLocaleString('vi-VN')} cây`:`${mobileQuantity} cây · ${chosen.length} loại`}</strong><button type="button" onClick={()=>goMobileStep(1)}>Sửa</button></div>
+            <div className="tn20-review-line"><span>Khách nhận</span><strong>{customerSource==='saved'?selected?.name||'Chưa chọn':guestName||'Khách lẻ'}</strong><button type="button" onClick={()=>goMobileStep(2)}>Sửa</button></div>
+          </div>
         <div className="subheading"><b><span className="badge-number" style={{display:'inline-grid',marginRight:8}}>4</span> {isCounter?'Thanh toán trực tiếp':'Tiền hàng & giao hàng'}</b></div>
         <div className="pos-payment-grid">
           {!isCounter&&<>
@@ -326,7 +377,16 @@ export function NewOrder(){
         {createdOrderId&&<a href={`/print/${createdOrderId}`} className="btn btn-outline btn-full">Đơn đã tạo, mở hóa đơn</a>}
         <button disabled={busy||!hasProducts||!bulkIsValid||!!createdOrderId} className="btn btn-primary btn-full pos-submit" onClick={create}><CheckCircle2 size={20}/>{busy?'Đang lưu đơn...':isCounter?'Thanh toán & in hóa đơn':'Chốt đơn & tạo hóa đơn'}<ArrowRight size={18}/></button>
         <p className="hint" style={{textAlign:'center',marginTop:10}}>Sau khi chốt sẽ mở phiếu 80mm để in hoặc gửi ảnh.</p>
+        </div>
       </section></div>
+    </div>
+    <div className="tn20-mobile-actions">
+      {mobileStep>1&&<button type="button" className="tn20-back" onClick={()=>goMobileStep(mobileStep===3?2:1)}>Quay lại</button>}
+      {mobileStep<3&&<button type="button" className="tn20-next" onClick={()=>goMobileStep(mobileStep===1?2:3)}>
+        {mobileStep===1?'Tiếp tục: Khách nhận':'Tiếp tục: Thanh toán'} <ArrowRight size={18}/>
+      </button>}
+      {mobileStep===3&&<p className="tn20-completion-note"><CheckCircle2 size={16}/> Chỉ nhấn chốt sau khi đã kiểm tra thông tin.</p>}
+    </div>
     </div>
     {showCustomer&&<CustomerEditor onClose={()=>setShowCustomer(false)} onSaved={c=>{setCustomerSource('saved');setSelectedLead(null);setCustomerId(c.id);setSavedPhone('');setSavedAddress('');setSubmitKey(crypto.randomUUID());}}/>}
     {showProduct&&<ProductEditor onClose={()=>setShowProduct(false)}/>}
