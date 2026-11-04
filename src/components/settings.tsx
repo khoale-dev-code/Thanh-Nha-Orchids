@@ -4,8 +4,9 @@ import {useEffect, useState, type FormEvent} from 'react';
 import {
   Check, Smartphone, Store, Truck, Download, RefreshCw, Shield,
   MapPin, Phone, Copy, ExternalLink, ChevronDown, Flower2, CheckCircle2,
-  AlertCircle, CreditCard, PackageCheck
+  AlertCircle, CreditCard, PackageCheck, Printer
 } from 'lucide-react';
+import Link from 'next/link';
 import {Shell} from './shell';
 import {useStore} from '@/context/store';
 import type {Settings} from '@/lib/types';
@@ -138,6 +139,7 @@ export function SettingsPage(){
         <div className="tn5-section-head"><span className="tn5-icon"><PackageCheck size={20}/></span><div><h2>Ứng dụng & tích hợp</h2><p>Trạng thái sử dụng ứng dụng trên thiết bị và kết nối vận chuyển.</p></div></div>
         <div className="tn5-services">
           <div className="tn5-service-row"><span className="tn5-service-icon"><Smartphone size={20}/></span><div><h3>Cài WebApp lên điện thoại</h3><p>Sử dụng như ứng dụng trên thiết bị hỗ trợ, qua HTTPS.</p></div>{install?<button type="button" className="tn5-secondary-button" onClick={async()=>{await install.prompt();setInstall(null)}}><Download size={16}/> Cài ứng dụng</button>:<span className="tn5-service-note">Chrome/Edge: Cài đặt ứng dụng; iPhone: Chia sẻ → Thêm vào Màn hình chính.</span>}</div>
+          <div className="tn5-service-row"><span className="tn5-service-icon"><Printer size={20}/></span><div><h3>Máy in hóa đơn 80mm</h3><p>Cấu hình dùng ứng dụng Android để in qua LAN.</p></div><Link href="/printer" className="tn5-secondary-button">Thiết lập máy in</Link></div>
           <div className="tn5-service-row"><span className="tn5-service-icon"><Truck size={20}/></span><div><h3>Vietnam Post / EMS</h3><p>Cần tài khoản đối tác, token và mã gửi hàng để tạo vận đơn.</p></div><span className="tn5-state is-warn">Cần cấu hình API</span></div>
         </div>
       </section>

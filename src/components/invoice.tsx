@@ -198,6 +198,7 @@ export function InvoicePage(){
     <div className="print-actions">
       <Link href="/orders" className="btn btn-outline"><ArrowLeft size={17}/> Đơn hàng</Link>
       <button onClick={()=>window.print()} className="btn btn-primary"><Printer size={17}/> In hóa đơn 80mm</button>
+      <button onClick={share} disabled={busy} className="btn btn-outline" title="Chọn RawBT hoặc ứng dụng in Android"><Printer size={17}/> In qua app Android</button>
       <button onClick={share} disabled={busy} className="btn btn-outline"><Share2 size={17}/> Chia sẻ ảnh</button>
       <button onClick={download} disabled={busy} className="btn btn-outline"><Download size={17}/> Lưu ảnh PNG</button>
     </div>
