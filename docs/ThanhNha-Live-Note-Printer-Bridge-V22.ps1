@@ -93,21 +93,28 @@ function Send-LiveNote($Job){
     $Graphics.Clear([System.Drawing.Color]::White)
     $Graphics.SmoothingMode=[System.Drawing.Drawing2D.SmoothingMode]::HighQuality
     $Graphics.TextRenderingHint=[System.Drawing.Text.TextRenderingHint]::AntiAliasGridFit
-    $Y=26
-    Draw-Line $Graphics ([ref]$Y) 'VUON LAN THANH NHA' 26 $true
-    Draw-Line $Graphics ([ref]$Y) 'NOTE LIVESTREAM' 23 $true
-    Draw-Rule $Graphics ([ref]$Y)
-    Draw-Line $Graphics ([ref]$Y) ([string]$Job.note_code) 33 $true
-    Draw-Line $Graphics ([ref]$Y) ([string]$Job.customer_name) 46 $true
-    if($Job.customer_phone){Draw-Line $Graphics ([ref]$Y) ([string]$Job.customer_phone) 36 $true}
-    if($Job.account_name){Draw-Line $Graphics ([ref]$Y) ('@ '+[string]$Job.account_name) 28 $true}
-    Draw-Line $Graphics ([ref]$Y) ('NGUON: '+[string]$Job.platform) 23 $false
-    if($Job.item_summary){Draw-Rule $Graphics ([ref]$Y);Draw-Line $Graphics ([ref]$Y) ('HANG: '+[string]$Job.item_summary) 26 $true;Draw-Line $Graphics ([ref]$Y) ('SO LUONG: '+[string]$Job.quantity) 24 $true}
-    if($Job.packing_note){Draw-Line $Graphics ([ref]$Y) ('GHI CHU: '+[string]$Job.packing_note) 23 $false}
-    Draw-Rule $Graphics ([ref]$Y)
-    Draw-Line $Graphics ([ref]$Y) ('IN LUC: '+(Get-Date -Format 'dd/MM/yyyy HH:mm:ss')) 24 $false
-    Draw-Line $Graphics ([ref]$Y) 'PHIEU TAM - CHUA CHOT DON' 19 $true
-    $UsedHeight=[int][Math]::Min($HeightMax,([int][Math]::Ceiling($Y/8.0)*8)+38)
+    # Compact V22.1: center each line, keep optional fields only, trim raster height.
+    $Y=10
+    $ShortCode=([string]$Job.note_code) -replace '^LN-', ''
+    Draw-Line $Graphics ([ref]$Y) ('NOTE '+$ShortCode) 25 $true
+    Draw-Line $Graphics ([ref]$Y) ([string]$Job.customer_name) 44 $true
+    if(-not [string]::IsNullOrWhiteSpace([string]$Job.customer_phone)){
+      Draw-Line $Graphics ([ref]$Y) ([string]$Job.customer_phone) 34 $true
+    }
+    if(-not [string]::IsNullOrWhiteSpace([string]$Job.account_name)){
+      $Handle=([string]$Job.account_name).Trim() -replace '^@\s*', ''
+      if($Handle){Draw-Line $Graphics ([ref]$Y) ('@'+$Handle) 26 $true}
+    }
+    if(-not [string]::IsNullOrWhiteSpace([string]$Job.item_summary)){
+      Draw-Line $Graphics ([ref]$Y) (([string]$Job.item_summary)+' x'+([string]$Job.quantity)) 26 $true
+    }
+    if(-not [string]::IsNullOrWhiteSpace([string]$Job.packing_note)){
+      Draw-Line $Graphics ([ref]$Y) ([string]$Job.packing_note) 23 $false
+    }
+    $Source= switch([string]$Job.platform){'Facebook' {'FB'} 'TikTok' {'TT'} 'Truc tiep' {'SHOP'} default {'KHAC'}}
+    Draw-Line $Graphics ([ref]$Y) ((Get-Date -Format 'dd/MM HH:mm')+'  -  '+$Source) 21 $false
+    # Only 12 white pixels after last text; paper transport before the cutter is device-defined.
+    $UsedHeight=[int][Math]::Min($HeightMax,([int][Math]::Ceiling($Y/8.0)*8)+12)
     $Client=[Net.Sockets.TcpClient]::new()
     try {
       $Ar=$Client.BeginConnect($PrinterIp,$Port,$null,$null)
@@ -142,7 +149,7 @@ function Send-LiveNote($Job){
           $Stream.Write($Packet,0,$Packet.Length)
         }
       } finally {$Bmp.UnlockBits($Bits)}
-      $Tail=[byte[]](10,10,10,29,86,0)
+      $Tail=[byte[]](10,29,86,0)
       $Stream.Write($Tail,0,$Tail.Length)
       $Stream.Flush()
     } finally {$Client.Close()}

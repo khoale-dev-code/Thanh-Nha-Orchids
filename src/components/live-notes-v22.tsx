@@ -17,23 +17,23 @@ const KEY='thanh-nha-live-notes-v22';
 const emptyDraft=():Draft=>({platform:'Facebook',customer_name:'',customer_phone:'',account_name:'',item_summary:'',quantity:1,packing_note:''});
 const sourceName=(v:Platform)=>v==='Truc tiep'?'Tại cửa hàng':v==='Khac'?'Khác':v;
 const timeVN=(x:string)=>new Date(x).toLocaleString('vi-VN',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit',year:'numeric'});
+const shortTimeVN=(x:string)=>{const d=new Date(x);return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;};
 const newCode=(id:string,d:Date)=>`LN-${String(d.getFullYear()).slice(-2)}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${id.replace(/-/g,'').slice(0,8).toUpperCase()}`;
 function demoLoad():LiveNote[]{try{return (JSON.parse(localStorage.getItem(KEY)||'[]') as LiveNote[]).slice(0,150)}catch{return []}}
-function NotePaper({note,printedAt}:{note:LiveNote;printedAt:string}){return <article className="tn22-paper" aria-label={`Phiếu ghi chú ${note.note_code}`}>
- <div className="tn22-paper-brand">VƯỜN LAN THANH NHÃ</div>
- <div className="tn22-paper-kind">PHIẾU NOTE LIVESTREAM</div>
- <div className="tn22-paper-rule"/>
- <div className="tn22-paper-code">{note.note_code}</div>
- <div className="tn22-paper-name">{note.customer_name}</div>
- {note.customer_phone&&<div className="tn22-paper-phone">{note.customer_phone}</div>}
- {note.account_name&&<div className="tn22-paper-account">@ {note.account_name}</div>}
- <div className="tn22-paper-source">Nguồn: {sourceName(note.platform)}</div>
- {note.item_summary&&<div className="tn22-paper-product"><b>Hàng: {note.item_summary}</b><span>Số lượng: {note.quantity}</span></div>}
- {note.packing_note&&<div className="tn22-paper-extra">Ghi chú: {note.packing_note}</div>}
- <div className="tn22-paper-rule"/>
- <div className="tn22-paper-date"><span>In lúc</span><strong data-printed-at="true">{printedAt}</strong></div>
- <div className="tn22-paper-footer">PHIẾU TẠM • CHƯA PHẢI ĐƠN HÀNG</div>
- </article>}
+function NotePaper({note,printedAt}:{note:LiveNote;printedAt:string}){
+ const shortCode=note.note_code.replace(/^LN-/, '');
+ const source=note.platform==='Facebook'?'FB':note.platform==='TikTok'?'TT':note.platform==='Truc tiep'?'SHOP':'KHAC';
+ const handle=note.account_name.trim().replace(/^@\s*/, '');
+ return <article className="tn22-paper tn221-paper" aria-label={`Phiếu ghi chú ${note.note_code}`}>
+  <div className="tn22-paper-code">NOTE {shortCode}</div>
+  <div className="tn22-paper-name">{note.customer_name}</div>
+  {note.customer_phone&&<div className="tn22-paper-phone">{note.customer_phone}</div>}
+  {handle&&<div className="tn22-paper-account">@{handle}</div>}
+  {note.item_summary&&<div className="tn22-paper-product">{note.item_summary} × {note.quantity}</div>}
+  {note.packing_note&&<div className="tn22-paper-extra">{note.packing_note}</div>}
+  <div className="tn22-paper-date"><span data-printed-at="true">{printedAt}</span><span className="tn22-paper-platform"> · {source}</span></div>
+ </article>;
+}
 export function LiveNotesV22(){
  const {ready,cloud,unauthorized,email}=useStore();
  const [draft,setDraft]=useState<Draft>(emptyDraft);
@@ -46,7 +46,7 @@ export function LiveNotesV22(){
  const [busyId,setBusyId]=useState('');
  const [error,setError]=useState('');
  const [message,setMessage]=useState('');
- const [printedAt,setPrintedAt]=useState(()=>timeVN(new Date().toISOString()));
+ const [printedAt,setPrintedAt]=useState(()=>shortTimeVN(new Date().toISOString()));
  const paperRef=useRef<HTMLDivElement>(null);
  const saveLock=useRef(false);
  const selected=notes.find(n=>n.id===selectedId)||null;
@@ -80,7 +80,7 @@ export function LiveNotesV22(){
   try{
    if(cloud){const db=browserDb();if(!db)throw new Error('Chưa kết nối Supabase');const r=await db.from('family_live_notes').insert(row);if(r.error)throw new Error(r.error.message)}
    else{const next=[row,...demoLoad()].slice(0,150);localStorage.setItem(KEY,JSON.stringify(next))}
-   setNotes(prev=>[row,...prev].slice(0,150));setSelectedId(id);setPrintedAt(timeVN(at.toISOString()));setDraft(emptyDraft());
+   setNotes(prev=>[row,...prev].slice(0,150));setSelectedId(id);setPrintedAt(shortTimeVN(at.toISOString()));setDraft(emptyDraft());
    setMessage('Đã lưu phiếu tạm. Chọn “In qua máy cửa hàng” hoặc “In qua app Android” bên dưới.');
    if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
    requestAnimationFrame(()=>paperRef.current?.scrollIntoView({behavior:'smooth',block:'start'}));
@@ -119,7 +119,7 @@ export function LiveNotesV22(){
   const host=document.createElement('div');host.className='tn22-export-host';
   Object.assign(host.style,{position:'fixed',top:'0',left:'-10000px',width:'302px',zIndex:'-1',pointerEvents:'none'});
   const clone=paper.cloneNode(true) as HTMLElement;clone.classList.add('tn22-export-paper');
-  const at=timeVN(new Date().toISOString());clone.querySelector('[data-printed-at]')!.textContent=at;
+  const at=shortTimeVN(new Date().toISOString());clone.querySelector('[data-printed-at]')!.textContent=at;
   host.appendChild(clone);document.body.appendChild(host);
   try{
    if(document.fonts?.ready)await document.fonts.ready;
@@ -141,11 +141,11 @@ export function LiveNotesV22(){
     const url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
     setMessage('Đã tải ảnh note PNG. Mở ảnh trong ứng dụng in Android để in.');
    }
-   setPrintedAt(timeVN(new Date().toISOString()));
+   setPrintedAt(shortTimeVN(new Date().toISOString()));
   }catch(e){if((e as Error).name!=='AbortError')setError(e instanceof Error?e.message:'Không chia sẻ được phiếu')}
   finally{setSending(false)}
  };
- const nativePrint=()=>{if(!selected)return;setPrintedAt(timeVN(new Date().toISOString()));setTimeout(()=>window.print(),120)};
+ const nativePrint=()=>{if(!selected)return;setPrintedAt(shortTimeVN(new Date().toISOString()));setTimeout(()=>window.print(),120)};
  if(!ready||unauthorized||(cloud&&!email))return <Shell title="In note livestream"><p>Đang kiểm tra phiên đăng nhập...</p></Shell>;
  return <Shell title="In note livestream" subtitle="Ghi nhanh tên khách đang xem live, in phiếu nhỏ và kẹp lên hàng. Không tự tạo đơn.">
   <div className="tn22-page">
@@ -175,7 +175,7 @@ export function LiveNotesV22(){
    {(error||message)&&<div role={error?'alert':'status'} className={`tn22-feedback ${error?'error':''}`}>{error||message}</div>}
    <section className="tn22-card tn22-list"><div className="tn22-card-head"><span className="tn22-step">03</span><div><h3>Sổ note livestream</h3><p>Lưu lại các phiếu để tìm kiếm, in lại hoặc đánh dấu đã kẹp.</p></div><button type="button" onClick={()=>void reload().catch(e=>setError(e instanceof Error?e.message:'Không tải được'))} className="tn22-refresh" aria-label="Làm mới"><RefreshCw size={18}/></button></div>
     <label className="tn22-search"><Search size={19}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Tìm tên, số điện thoại hoặc mã note" aria-label="Tìm note"/></label>
-    {!viewNotes.length?<div className="tn22-list-empty">Chưa có note phù hợp. Nhập khách vừa chốt ở biểu mẫu phía trên.</div>:<div className="tn22-list-items">{viewNotes.map(n=><div key={n.id} className={`tn22-list-item ${selectedId===n.id?'selected':''}`}><button type="button" className="tn22-list-pick" onClick={()=>{setSelectedId(n.id);setPrintedAt(timeVN(new Date().toISOString()));setError('');setMessage('')}}><span><b>{n.customer_name}</b><small>{n.note_code} · {sourceName(n.platform)} · {timeVN(n.created_at)}</small></span><ChevronRight size={18}/></button><div className="tn22-list-side"><span className={`tn22-chip ${n.status}`}>{n.status==='pending'?'Chờ kẹp':'Đã kẹp'}</span>{n.status==='pending'&&<><button type="button" disabled={busyId===n.id} onClick={()=>void setStatus(n,'packed')}><CheckCheck size={15}/> Đã kẹp</button><button type="button" className="tn22-cancel" disabled={busyId===n.id} onClick={()=>{if(confirm(`Hủy note ${n.note_code}?`))void setStatus(n,'cancelled')}}><Trash2 size={14}/> Hủy</button></>}</div></div>)}</div>}
+    {!viewNotes.length?<div className="tn22-list-empty">Chưa có note phù hợp. Nhập khách vừa chốt ở biểu mẫu phía trên.</div>:<div className="tn22-list-items">{viewNotes.map(n=><div key={n.id} className={`tn22-list-item ${selectedId===n.id?'selected':''}`}><button type="button" className="tn22-list-pick" onClick={()=>{setSelectedId(n.id);setPrintedAt(shortTimeVN(new Date().toISOString()));setError('');setMessage('')}}><span><b>{n.customer_name}</b><small>{n.note_code} · {sourceName(n.platform)} · {timeVN(n.created_at)}</small></span><ChevronRight size={18}/></button><div className="tn22-list-side"><span className={`tn22-chip ${n.status}`}>{n.status==='pending'?'Chờ kẹp':'Đã kẹp'}</span>{n.status==='pending'&&<><button type="button" disabled={busyId===n.id} onClick={()=>void setStatus(n,'packed')}><CheckCheck size={15}/> Đã kẹp</button><button type="button" className="tn22-cancel" disabled={busyId===n.id} onClick={()=>{if(confirm(`Hủy note ${n.note_code}?`))void setStatus(n,'cancelled')}}><Trash2 size={14}/> Hủy</button></>}</div></div>)}</div>}
     <p className="tn22-help">Các phiếu chỉ phục vụ gom hàng. Đơn chính thức vẫn cần tạo ở trang <Link href="/new-order">Chốt đơn <ArrowRight size={13}/></Link>. Không tự tính doanh thu, tồn kho hoặc thanh toán.</p>
    </section>
   </div>

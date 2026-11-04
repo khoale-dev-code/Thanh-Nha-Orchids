@@ -21,3 +21,30 @@
 
 .tn22-list-side button.tn22-cancel{color:#aa453d;border-color:#f1d1cc}.tn22-paper-backdrop{scroll-margin-top:20px}
 @media(max-width:359px){.tn22-paper-backdrop .tn22-paper{transform:scale(.85);margin-top:-24px;margin-bottom:-24px}.tn22-export-host .tn22-paper{transform:none;margin:0}}
+
+/* TN22.1 COMPACT PRINT START: center-aligned paper, no decorative sections */
+.tn22-paper.tn221-paper{
+ width:302px;min-width:302px;max-width:302px;
+ padding:9px 10px 9px;line-height:1.25;
+ text-align:center;overflow-wrap:anywhere;word-break:normal;
+}
+.tn221-paper :is(.tn22-paper-code,.tn22-paper-name,.tn22-paper-phone,.tn22-paper-account,.tn22-paper-product,.tn22-paper-extra,.tn22-paper-date){
+ display:block;text-align:center;margin-left:auto;margin-right:auto;
+ padding:0;border:0;max-width:100%;
+}
+.tn221-paper .tn22-paper-code{font-size:18px;line-height:1.3;font-weight:850;letter-spacing:0;margin:0 0 3px}
+.tn221-paper .tn22-paper-name{font-size:29px;line-height:1.2;font-weight:900;margin:0 0 3px}
+.tn221-paper .tn22-paper-phone{font-size:23px;line-height:1.25;font-weight:850;margin:0 0 2px}
+.tn221-paper .tn22-paper-account{font-size:17px;line-height:1.3;font-weight:750;margin:0 0 3px}
+.tn221-paper .tn22-paper-product{font-size:16px;line-height:1.35;font-weight:800;margin:4px 0 2px}
+.tn221-paper .tn22-paper-extra{font-size:13px;line-height:1.35;margin:2px 0 3px;font-weight:500}
+.tn221-paper .tn22-paper-date{font-size:12px;line-height:1.3;font-weight:600;margin:5px 0 0;color:#222;white-space:normal}
+.tn221-paper .tn22-paper-platform{display:inline}
+.tn22-export-host .tn22-paper.tn221-paper,.tn22-paper.tn221-paper.tn22-export-paper{
+ padding:9px 10px 9px!important;box-shadow:none!important;
+ transform:none!important;margin-bottom:0!important;
+}
+@media print{
+ body:has(.tn22-page) .tn22-paper.tn221-paper{padding:7px 9px!important;margin:0!important;box-shadow:none!important;}
+}
+/* TN22.1 COMPACT PRINT END */
