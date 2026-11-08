@@ -1,5 +1,6 @@
 'use client';
-import {Facebook,RefreshCw,UserRoundPlus,Users,Video,ShoppingBasket} from 'lucide-react';
+import {Facebook,RefreshCw,UserRoundPlus,Users,Video,ShoppingBasket,ChevronDown} from 'lucide-react';
+import {useState} from 'react';
 import type {Customer} from '@/lib/types';
 import type {LeadRow} from '@/lib/family-operations';
 import './checkout-customer-v11.css';
@@ -28,11 +29,12 @@ type Props={
  onAddCustomer:()=>void;isCounter:boolean;
 };
 export function CheckoutCustomerV11(p:Props){
+ const [showExtras,setShowExtras]=useState(false);
  const selected=p.customers.find(c=>c.id===p.customerId);
  const social=p.source==='facebook'||p.source==='tiktok';
  return <section className="pos-contact-v11" aria-labelledby="pos-contact-title">
    <div className="pos-contact-head">
-     <div><h3 id="pos-contact-title"><span className="badge-number">3</span> Khách hàng</h3><p>Chọn nguồn khách, điền liên hệ một lần trước khi in hóa đơn.</p></div>
+     <div><h3 id="pos-contact-title"><span className="badge-number">1</span> Khách hàng</h3><p>Chỉ cần tên hoặc nickname để giữ đơn livestream; liên hệ có thể bổ sung sau.</p></div>
      <button type="button" className="btn btn-soft btn-sm" onClick={p.onAddCustomer}><UserRoundPlus size={16}/> Thêm khách</button>
    </div>
    <div className="pos-customer-sources" role="group" aria-label="Nguồn khách hàng">
@@ -65,14 +67,19 @@ export function CheckoutCustomerV11(p:Props){
        <p className="pos-contact-tip">Chọn số và địa chỉ cho lần giao này, không thay đổi thông tin trên hóa đơn cũ.</p>
      </>}
    </div>:<div className="pos-customer-detail-grid">
-       <label className="field pos-contact-field">Tên khách hàng {social&&<b>*</b>}
-         <input className="input" value={p.guestName} onChange={e=>p.onGuestNameChange(e.target.value)} maxLength={120} placeholder={social?'Tên Facebook/TikTok của khách':'Khách lẻ (không bắt buộc tại quầy)'}/>
+       <label className="field pos-contact-field tn24-name-field">Tên / nickname khách {!p.isCounter&&<b>*</b>}
+         <input className="input" value={p.guestName} onChange={e=>p.onGuestNameChange(e.target.value)} maxLength={120} placeholder={social?'Ví dụ: Chị Lan (Facebook/TikTok)':'Tên khách mua hàng'}/>
        </label>
-       <label className="field pos-contact-field">Số điện thoại {(!p.isCounter)&&<b>*</b>}
-         <input type="tel" inputMode="tel" autoComplete="tel" className="input" value={p.guestPhone} onChange={e=>p.onGuestPhoneChange(e.target.value)} maxLength={20} placeholder="09xx xxx xxx"/>
-       </label>
-       <div className="pos-contact-full">
-         <DeliveryAddressV15 key={p.selectedLead?.id||p.source} value={p.guestAddress} onChange={p.onGuestAddressChange} required={!p.isCounter}/>
+       <div className={`pos-contact-full tn24-extra-contact ${showExtras?'is-open':''}`}>
+         <button type="button" className="tn24-extra-toggle" aria-expanded={showExtras} onClick={()=>setShowExtras(v=>!v)}>SĐT và địa chỉ (bổ sung sau được) <ChevronDown size={17}/></button>
+         <div className="tn24-extra-fields">
+           <label className="field pos-contact-field">Số điện thoại (không bắt buộc)
+             <input type="tel" inputMode="tel" autoComplete="tel" className="input" value={p.guestPhone} onChange={e=>p.onGuestPhoneChange(e.target.value)} maxLength={20} placeholder="Để trống nếu chưa xin được"/>
+           </label>
+           <div className="pos-contact-full">
+             <DeliveryAddressV15 key={p.selectedLead?.id||p.source} value={p.guestAddress} onChange={p.onGuestAddressChange} required={false}/>
+           </div>
+         </div>
        </div>
        {social&&<label className="pos-contact-checkbox pos-contact-full">
          <input type="checkbox" checked={p.rememberContact} onChange={e=>p.onRememberContactChange(e.target.checked)}/>
@@ -94,6 +101,6 @@ export function CheckoutCustomerV11(p:Props){
        {p.leadError&&<p className="form-error" role="alert">{p.leadError}</p>}
      </div>
    </details>
-   {!p.isCounter&&<p className="pos-contact-tip">Đơn giao hàng cần tên, điện thoại và địa chỉ để tránh nhầm người nhận. Hãy kiểm tra lại trước khi bấm Chốt đơn.</p>}
+   {!p.isCounter&&<p className="pos-contact-tip">Có thể in và gửi phiếu xác nhận ngay khi mới có tên khách. Trước lúc giao hàng, mở Chi tiết đơn để bổ sung đủ số điện thoại và địa chỉ.</p>}
  </section>;
 }

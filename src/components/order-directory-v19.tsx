@@ -6,7 +6,7 @@ import {money,orderStatuses,colorForStatus} from '@/lib/math';
 import type {Order,OrderStatus} from '@/lib/types';
 import './order-directory-v19.css';
 
-type FilterValue='all'|OrderStatus;
+type FilterValue='all'|'pending'|OrderStatus;
 type Props={
   orders:Order[];
   rows:Order[];
@@ -19,6 +19,7 @@ type Props={
 
 const filters:{id:FilterValue;label:string}[]=[
   {id:'all',label:'Tất cả'},
+  {id:'pending',label:'Chờ liên hệ'},
   {id:'new',label:'Mới'},
   {id:'confirmed',label:'Đã xác nhận'},
   {id:'packing',label:'Đang gói'},
@@ -31,6 +32,7 @@ export function OrderDirectoryV19({orders,rows,filter,onFilterChange,status,onSt
   const filterCounts:Record<string,number>={all:orders.length};
   for(const order of orders){
     filterCounts[order.status]=(filterCounts[order.status]||0)+1;
+    if(order.shipping_provider!=='Bán trực tiếp'&&(!order.customer_phone.trim()||!order.customer_address.trim()))filterCounts.pending=(filterCounts.pending||0)+1;
   }
   return <div className="tn19-directory">
     <div className="tn19-search-wrap">
@@ -73,6 +75,7 @@ export function OrderDirectoryV19({orders,rows,filter,onFilterChange,status,onSt
             <div className="tn19-card-customer-name">
               <b>{order.customer_name||'Khách vãng lai'}</b>
               <span>{order.customer_phone||'Chưa có số điện thoại'}</span>
+              {order.shipping_provider!=='Bán trực tiếp'&&(!order.customer_phone.trim()||!order.customer_address.trim())&&<span className="tn24-missing-badge">Chờ bổ sung SĐT / địa chỉ</span>}
             </div>
           </div>
           <div className="tn19-card-meta">

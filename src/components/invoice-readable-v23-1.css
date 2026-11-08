@@ -1,0 +1,64 @@
+/* Thanh Nha invoice: accessible 80mm receipt UI; isolated from prior versions. */
+.print-page .cafe-receipt.tn23-readable{box-sizing:border-box!important;width:100%!important;max-width:100%!important;min-width:0!important}
+.cafe-receipt.tn23-readable{background:#fff;color:#111!important;font-family:'Be Vietnam Pro',Arial,sans-serif;font-size:12px;line-height:1.45;overflow-wrap:anywhere}
+.cafe-receipt.tn23-readable .receipt-header{text-align:center}
+.cafe-receipt.tn23-readable .receipt-logo{width:58px;max-width:35%;height:auto;margin:0 auto 5px}
+.cafe-receipt.tn23-readable .receipt-header h1{font-size:17px;line-height:1.23;margin:3px 0;font-weight:900;color:#111}
+.cafe-receipt.tn23-readable .receipt-header h2{font-size:16px;line-height:1.2;margin:8px 0 3px;color:#111}
+.cafe-receipt.tn23-readable .receipt-header p{font-size:10.5px;line-height:1.42;margin:3px 0;color:#333}
+.cafe-receipt.tn23-readable .receipt-header .receipt-bill-kind{font-size:10px;font-weight:800;letter-spacing:0}
+.cafe-receipt.tn23-readable .receipt-separator{margin:9px 0;border-color:#777}
+.cafe-receipt.tn23-readable .receipt-info{display:flex;flex-direction:column;gap:5px;padding:1px 0}
+.cafe-receipt.tn23-readable .receipt-info>div{display:flex;justify-content:space-between;gap:8px;font-size:12px;line-height:1.4;min-width:0;align-items:flex-start}
+.cafe-receipt.tn23-readable .receipt-info>div>span:first-child{flex:0 0 auto;color:#333;font-size:11px}
+.cafe-receipt.tn23-readable .receipt-info>div>:last-child{min-width:0;max-width:70%;font-weight:750;overflow-wrap:anywhere;text-align:right;color:#111}
+.cafe-receipt.tn23-readable .receipt-info>.tn23-customer{order:-30;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;padding:8px 3px;border:2px solid #111}
+.cafe-receipt.tn23-readable .receipt-info>.tn23-customer>span{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#444}
+.cafe-receipt.tn23-readable .receipt-info>.tn23-customer>strong{font-size:24px;font-weight:900;line-height:1.18;max-width:100%;text-align:center;overflow-wrap:anywhere;word-break:normal;color:#111}
+.cafe-receipt.tn23-readable .receipt-info>.tn23-code{order:-20;align-items:baseline;padding:3px 0;border-bottom:1px solid #ddd}
+.cafe-receipt.tn23-readable .receipt-info>.tn23-code>strong{font-size:14px;font-weight:900;max-width:75%;letter-spacing:0}
+.cafe-receipt.tn23-readable .receipt-info>.tn23-contact{order:-10;align-items:baseline}
+.cafe-receipt.tn23-readable .receipt-info>.tn23-contact>:last-child{font-size:14px;font-weight:850;letter-spacing:.01em}
+.cafe-receipt.tn23-readable .receipt-info>.receipt-address-line{display:block;margin-top:2px}
+.cafe-receipt.tn23-readable .receipt-info>.receipt-address-line>span{display:block;max-width:100%;text-align:left;font-size:11px}
+.cafe-receipt.tn23-readable .receipt-info>.receipt-address-line>span:last-child{font-size:12px;font-weight:650;line-height:1.5;margin-top:3px;overflow-wrap:anywhere}
+.cafe-receipt.tn23-readable .receipt-line-header{font-size:11px;font-weight:900;letter-spacing:.02em;border-color:#777;padding-bottom:8px}
+.cafe-receipt.tn23-readable .receipt-item{padding:10px 0 11px;border-bottom:1px dashed #aaa}
+.cafe-receipt.tn23-readable .receipt-product-name{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;font-size:16px;line-height:1.25;font-weight:900;color:#111}
+.cafe-receipt.tn23-readable .receipt-product-name span{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.cafe-receipt.tn23-readable .receipt-product-name strong{flex:0 0 auto;max-width:45%;white-space:normal;font-size:16px;font-weight:900;line-height:1.2;color:#111;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.cafe-receipt.tn23-readable .receipt-variant{font-size:12px;line-height:1.35;color:#333;margin-top:5px}
+.cafe-receipt.tn23-readable .receipt-quantity{font-size:14px;line-height:1.4;color:#111;font-weight:800;margin-top:5px;font-variant-numeric:tabular-nums}
+.cafe-receipt.tn23-readable .receipt-count{font-size:12px;font-weight:750;margin-top:9px}
+.cafe-receipt.tn23-readable .receipt-count strong{font-size:13px;color:#111}
+.cafe-receipt.tn23-readable .receipt-totals{gap:7px}
+.cafe-receipt.tn23-readable .receipt-totals>div,.cafe-receipt.tn23-readable .receipt-paid-row{font-size:13px;line-height:1.4;color:#111}
+.cafe-receipt.tn23-readable .receipt-totals strong,.cafe-receipt.tn23-readable .receipt-paid-row strong{font-weight:850;font-size:13px;color:#111;max-width:60%;overflow-wrap:anywhere}
+.cafe-receipt.tn23-readable .receipt-grand-total{margin:10px 0;padding:10px 0;gap:6px;border-color:#111;align-items:flex-end}
+.cafe-receipt.tn23-readable .receipt-grand-total span{font-size:12px;font-weight:900;max-width:40%;line-height:1.3;color:#111}
+.cafe-receipt.tn23-readable .receipt-grand-total strong{font-size:24px;line-height:1.08;font-weight:900;letter-spacing:-.03em;white-space:normal;overflow-wrap:anywhere;min-width:0;color:#111;text-align:right}
+.cafe-receipt.tn23-readable .receipt-payment-state{border:1px solid #111;padding:7px 4px;font-size:12px;font-weight:900;line-height:1.3;margin:10px 0}
+.cafe-receipt.tn23-readable .receipt-note{font-size:12px;line-height:1.5}
+.cafe-receipt.tn23-readable .invoice-qr{padding:8px 0;margin-top:10px}
+.cafe-receipt.tn23-readable .invoice-qr img{width:132px;height:132px}
+.cafe-receipt.tn23-readable .invoice-qr p{font-size:10px}
+.cafe-receipt.tn23-readable .receipt-footer{font-size:10px;line-height:1.5;margin-top:8px}
+.cafe-receipt.tn23-readable .receipt-footer>strong{font-size:11px}
+.cafe-receipt.tn23-readable .receipt-footer p{font-size:10px;margin:3px 0}
+/* In paper mode, override legacy global !important font shrinking at 80mm. */
+@media print{
+  .print-page .cafe-receipt.tn23-readable{font-size:12px!important;line-height:1.45!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-header h1{font-size:17px!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-header h2{font-size:16px!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-header p{font-size:10px!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-info>div{font-size:12px!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-info>.tn23-customer>span{font-size:10px!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-info>.tn23-customer>strong{font-size:23px!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-info>.tn23-code>strong{font-size:14px!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-info>.tn23-contact>:last-child{font-size:14px!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-product-name,.print-page .cafe-receipt.tn23-readable .receipt-product-name strong{font-size:15px!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-quantity{font-size:14px!important;color:#111!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-variant{font-size:11px!important;color:#333!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-grand-total strong{font-size:23px!important;color:#111!important}
+  .print-page .cafe-receipt.tn23-readable .receipt-payment-state{font-size:12px!important}
+}

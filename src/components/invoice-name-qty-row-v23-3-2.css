@@ -1,0 +1,46 @@
+/* Thanh Nha V23.3.2: name and quantity share the first row on 80mm receipts. */
+.cafe-receipt .receipt-items > .receipt-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  column-gap: 8px;
+  align-items: start;
+}
+.cafe-receipt .receipt-items > .receipt-item > .tn233-name {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  font-size: 16px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.cafe-receipt .receipt-items > .receipt-item > .tn233-quantity {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+.cafe-receipt .receipt-items > .receipt-item > .receipt-variant {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+.cafe-receipt .receipt-items > .receipt-item > .tn233-price {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  margin-top: 5px;
+}
+.cafe-receipt .receipt-items > .receipt-item > .tn233-unit {
+  grid-column: 1 / -1;
+  grid-row: 4;
+}
+@media print {
+  .print-page .cafe-receipt .receipt-items > .receipt-item > .tn233-name {
+    font-size: 16px !important;
+  }
+  .print-page .cafe-receipt .receipt-items > .receipt-item > .tn233-quantity {
+    font-size: 12px !important;
+  }
+}

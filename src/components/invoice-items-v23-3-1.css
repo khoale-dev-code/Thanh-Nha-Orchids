@@ -1,0 +1,15 @@
+/* V23.3.1: simple, readable 80 mm item lines */
+.cafe-receipt .receipt-item{padding:10px 0;border-bottom:1px dashed #aaa}
+.cafe-receipt .receipt-item:last-child{border-bottom:0}
+.cafe-receipt .tn233-name{font-size:17px;font-weight:900;line-height:1.3;color:#111;overflow-wrap:anywhere;word-break:normal}
+.cafe-receipt .tn233-quantity{font-size:15px;font-weight:650;line-height:1.45;color:#111;margin-top:4px}
+.cafe-receipt .tn233-quantity strong{font-weight:900;font-variant-numeric:tabular-nums}
+.cafe-receipt .tn233-price{font-size:16px;font-weight:650;line-height:1.4;color:#111;margin-top:2px}
+.cafe-receipt .tn233-price strong{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.cafe-receipt .tn233-unit{font-size:11px;line-height:1.4;color:#444;margin-top:3px}
+@media print{
+ .print-page .cafe-receipt .tn233-name{font-size:16px!important;color:#000!important}
+ .print-page .cafe-receipt .tn233-quantity{font-size:14px!important;color:#000!important}
+ .print-page .cafe-receipt .tn233-price{font-size:15px!important;color:#000!important}
+ .print-page .cafe-receipt .tn233-price strong{font-size:17px!important;color:#000!important}
+}

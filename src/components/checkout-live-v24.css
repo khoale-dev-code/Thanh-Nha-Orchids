@@ -1,0 +1,69 @@
+/* Thanh Nha V24: mobile-first checkout, customer -> products -> payment. */
+.tn24-quick-backdrop{z-index:120}
+.tn24-quick-dialog{max-width:480px;width:min(94vw,480px);max-height:min(90dvh,850px);overflow-y:auto;padding:0;border-radius:20px}
+.tn24-quick-head{background:#f1faf4;padding:18px 18px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.tn24-quick-head span{font-size:10px;letter-spacing:.08em;font-weight:850;color:#16844c}
+.tn24-quick-head h2{font-size:21px;font-weight:850;color:#153b29;margin:5px 0}
+.tn24-quick-head p{font-size:12px;color:#61826b;margin:0}
+.tn24-quick-head>button{border:0;background:#e4f1e8;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;flex-shrink:0}
+.tn24-quick-body{display:grid;gap:15px;padding:18px}
+.tn24-quick-modes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tn24-quick-modes button{min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #d9e8dd;border-radius:13px;background:#fff;color:#3a6145;font-weight:800}
+.tn24-quick-modes button.active{border-color:#0d9750;background:#eaf8ef;color:#087343}
+.tn24-quick-body .field{min-width:0;font-size:14px;font-weight:750;color:#254931;display:grid;gap:7px}
+.tn24-quick-body .input,.tn24-quick-body input{font-size:16px!important;min-height:48px}
+.tn24-quick-count{display:grid;grid-template-columns:48px minmax(0,1fr) 48px;gap:8px}
+.tn24-quick-count input{text-align:center;width:100%}
+.tn24-quick-count button{border:1px solid #cfe3d4;background:#f0f9f3;border-radius:12px;font-size:22px;font-weight:700}
+.tn24-quick-preview{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;border-radius:12px;background:#f1f8f3;padding:13px;color:#22422f;font-size:13px;font-weight:800}
+.tn24-quick-preview strong{font-size:17px;white-space:nowrap;color:#006c3a}
+.tn24-quick-warning{margin:0;background:#fff8e8;border:1px solid #f3dea6;color:#725419;border-radius:12px;padding:11px;font-size:12px;line-height:1.55}
+.tn24-quick-footer{display:flex;gap:8px;padding:12px 18px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid #e2ede6;position:sticky;bottom:0;background:#fff}
+.tn24-quick-footer .btn{min-height:48px;flex:1;display:flex;align-items:center;justify-content:center;gap:5px;font-size:13px;min-width:0}
+.tn24-product-actions{display:flex;gap:7px;flex-wrap:wrap}
+.tn24-extra-toggle{display:none}
+.tn24-extra-fields{display:grid;gap:13px}
+.tn24-recipient-editor{border:1px solid #dcebe1;background:#f8fbf9;border-radius:16px;padding:13px 14px;margin:12px 0}
+.tn24-recipient-editor summary{color:#136a3e;font-size:14px;font-weight:850;cursor:pointer;min-height:40px;align-content:center}
+.tn24-recipient-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;padding-top:10px}
+.tn24-recipient-form .field{min-width:0}
+.tn24-recipient-full{grid-column:1/-1}
+.tn24-recipient-form .input,.tn24-recipient-form .textarea{font-size:16px!important;width:100%}
+.tn24-contact-success{color:#006a3d;margin:0;font-weight:750}
+.tn24-missing-badge{display:inline-flex!important;background:#fff3da;color:#805819!important;border-radius:8px;padding:4px 7px;font-size:11px!important;font-weight:800;margin-top:4px;max-width:max-content}
+@media(max-width:767px){
+ .tn20-checkout[data-mobile-step="1"] .tn20-sale-tools{display:grid!important}
+ .tn20-checkout[data-mobile-step="1"] .bulk-mode-switch{display:none!important}
+ .tn20-checkout[data-mobile-step="1"] .tn20-product-panel,
+ .tn20-checkout[data-mobile-step="1"] .tn20-cart-block,
+ .tn20-checkout[data-mobile-step="1"] .tn20-payment-block{display:none!important}
+ .tn20-checkout[data-mobile-step="1"] .tn20-customer-block{display:block!important;border:0;margin:0;padding-top:0}
+ .tn20-checkout[data-mobile-step="2"] .tn20-sale-tools{display:grid!important}
+ .tn20-checkout[data-mobile-step="2"] .sale-mode-section{display:none!important}
+ .tn20-checkout[data-mobile-step="2"] .tn20-product-panel{display:block!important}
+ .tn20-checkout[data-mobile-step="2"] .tn20-cart-block{display:block!important}
+ .tn20-checkout[data-mobile-step="2"] .tn20-customer-block{display:none!important}
+ .tn20-checkout[data-mobile-step="2"] .tn20-payment-block{display:none!important}
+ .tn20-checkout[data-mobile-step="3"] .tn20-sale-tools,
+ .tn20-checkout[data-mobile-step="3"] .tn20-product-panel,
+ .tn20-checkout[data-mobile-step="3"] .tn20-cart-block,
+ .tn20-checkout[data-mobile-step="3"] .tn20-customer-block{display:none!important}
+ .tn20-checkout[data-mobile-step="3"] .tn20-payment-block{display:block!important}
+ .tn20-checkout .tn24-name-field{grid-column:1/-1}
+ .tn24-extra-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:11px 12px;border-radius:12px;border:1px solid #d7e8dd;background:#f4faf6;color:#246044;font-weight:800;font-size:12px;min-height:46px}
+ .tn24-extra-toggle svg{transition:transform .15s}
+ .tn24-extra-contact.is-open .tn24-extra-toggle svg{transform:rotate(180deg)}
+ .tn24-extra-contact:not(.is-open) .tn24-extra-fields{display:none}
+ .tn24-extra-contact.is-open .tn24-extra-fields{display:grid;margin-top:11px}
+ .tn20-checkout .pos-contact-head .btn{min-height:40px}
+ .tn20-checkout .pos-customer-sources button{min-height:72px;padding:9px}
+ .tn20-checkout .pos-customer-sources .pos-customer-source-icon{display:none}
+ .tn20-checkout .pos-customer-sources button strong{font-size:13px}
+ .tn20-checkout .pos-customer-sources button small{font-size:10px}
+ .tn20-checkout .tn24-product-actions .btn{min-height:42px;font-size:12px}
+ .tn24-pending-warning{display:flex;gap:9px;align-items:flex-start;background:#fff8e7;border:1px solid #eed9a5;color:#735419;border-radius:12px;padding:11px;font-size:12px;font-weight:650;line-height:1.5;margin:6px 0 12px}
+ .tn24-pending-warning svg{flex:0 0 17px;margin-top:1px}
+ .tn24-recipient-form{grid-template-columns:1fr}
+ .tn24-recipient-full{grid-column:1}
+ .tn24-quick-backdrop .tn24-quick-dialog{width:100%;max-height:94dvh;position:fixed;left:0;right:0;bottom:0;max-width:none;border-radius:24px 24px 0 0}
+}

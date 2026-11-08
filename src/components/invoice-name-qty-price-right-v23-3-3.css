@@ -1,0 +1,64 @@
+/* Thanh Nha Invoice V23.3.3 */
+.cafe-receipt .receipt-items > .receipt-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  column-gap: 10px;
+  row-gap: 4px;
+  align-items: start;
+}
+.cafe-receipt .receipt-items > .receipt-item > .tn233-name {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  font-size: 16px;
+  line-height: 1.28;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+.cafe-receipt .receipt-items > .receipt-item > .tn233-quantity {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+.cafe-receipt .receipt-items > .receipt-item > .receipt-variant {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #555;
+}
+.cafe-receipt .receipt-items > .receipt-item > .tn233-price {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 800;
+  text-align: right;
+  white-space: nowrap;
+}
+.cafe-receipt .receipt-items > .receipt-item > .tn233-unit {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  margin-top: 2px;
+}
+@media print {
+  .print-page .cafe-receipt .receipt-items > .receipt-item > .tn233-name {
+    font-size: 16px !important;
+  }
+  .print-page .cafe-receipt .receipt-items > .receipt-item > .tn233-quantity {
+    font-size: 12px !important;
+  }
+  .print-page .cafe-receipt .receipt-items > .receipt-item > .tn233-price {
+    font-size: 14px !important;
+  }
+}

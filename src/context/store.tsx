@@ -7,7 +7,7 @@ import {browserDb,isCloudMode} from '@/lib/supabase';
 import {allCustomerPhones,normalizeCustomerPhone,cleanCustomerPhones,cleanCustomerAddresses,matchingCustomer,sharedCustomerPhone} from '@/lib/customer-directory-v16';
 
 const DEMO_KEY='thanh-nha-demo-v1';
-type OrderPatch=Partial<Pick<Order,'status'|'payment_status'|'shipping_provider'|'shipping_status'|'tracking_code'|'shipping_request_state'>>;
+type OrderPatch=Partial<Pick<Order,'status'|'payment_status'|'shipping_provider'|'shipping_status'|'tracking_code'|'shipping_request_state'|'customer_name'|'customer_phone'|'customer_address'|'recipient_province_code'|'recipient_district_code'|'recipient_ward_code'>>;
 interface StoreApi {data:Database;ready:boolean;busy:boolean;cloud:boolean;email:string;unauthorized:boolean;error:string;
  signIn:(email:string,password:string)=>Promise<void>;signOut:()=>Promise<void>;refresh:()=>Promise<void>;
  saveProduct:(p:NewProduct)=>Promise<void>;archiveProduct:(id:string)=>Promise<void>;
@@ -215,6 +215,14 @@ export function StoreProvider({children}:{children:React.ReactNode}){
   });return created!;
  };
  const patchOrder=async(id:string,patch:OrderPatch)=>mutate(async()=>{
+  const existing=data.orders.find(o=>o.id===id);
+  if(!existing)fail('Không tìm thấy đơn hàng để sửa.');
+  const nextName=patch.customer_name===undefined?existing.customer_name:patch.customer_name;
+  const nextPhone=patch.customer_phone===undefined?existing.customer_phone:patch.customer_phone;
+  const nextAddress=patch.customer_address===undefined?existing.customer_address:patch.customer_address;
+  if(!nextName.trim())fail('Tên khách hàng không được để trống.');
+  if(nextPhone){const digits=nextPhone.replace(/\D/g,'');if(!/^[+0-9().\s-]+$/.test(nextPhone)||digits.length<9||digits.length>12)fail('Số điện thoại phải có 9 đến 12 chữ số.');}
+  if(existing.shipping_provider!=='Bán trực tiếp' && (patch.status==='shipped'||patch.status==='delivered'||patch.shipping_request_state==='submitted') && (!nextPhone.trim()||!nextAddress.trim()))fail('Chưa đủ số điện thoại và địa chỉ, không được chuyển sang giao hàng.');
   if(!db){saveDemo(d=>({...d,orders:d.orders.map(o=>o.id===id?{...o,...patch,updated_at:new Date().toISOString()}:o),products:patch.status==='cancelled'&&d.orders.find(o=>o.id===id)?.status!=='cancelled'?d.products.map(p=>({...p,variants:p.variants.map(v=>{const q=d.orders.find(o=>o.id===id)?.items.filter(i=>i.sku===v.sku).reduce((s,i)=>s+i.quantity,0)||0;return v.stock_quantity!==null?{...v,stock_quantity:v.stock_quantity+q}:v})})):d.products}));return;}
   const r=await db.from('orders').update(patch).eq('id',id);if(r.error)fail(r.error.message);await load();
  });

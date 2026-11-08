@@ -8,11 +8,23 @@ import {browserDb} from '@/lib/supabase';
 import type {Order,CartonDetails} from '@/lib/types';
 import {money} from '@/lib/math';
 import './invoice-image-v15.css';
+import './invoice-items-v23-3-1.css';
+import './invoice-name-qty-row-v23-3-2.css';
+import './invoice-name-qty-price-right-v23-3-3.css';
+import './invoice-readable-v23-1.css';
 
 const FACEBOOK_URL='https://www.facebook.com/vuonlanthanhnha/?locale=vi_VN';
 const FACEBOOK_LABEL='facebook.com/vuonlanthanhnha';
 const BRAND_ADDRESS='1 Hẻm số 17 Lạc Long Quân, Hiệp Định, Thanh Điền, Tây Ninh, Việt Nam';
 const ORDER_STATUS:Record<Order['status'],string>={new:'Mới tạo',confirmed:'Đã xác nhận',packing:'Đang đóng gói',shipped:'Đang giao',delivered:'Đã giao',cancelled:'Đã hủy'};
+
+function invoiceImageFileName(order:Order|null){
+  if(!order)return 'Hoa-don-Thanh-Nha.png';
+  const safe=(value:string)=>value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-+|-+$/g,'').toLowerCase();
+  const customer=safe(order.customer_name||'khach-hang').slice(0,48)||'khach-hang';
+  const code=safe(order.code||'hoa-don')||'hoa-don';
+  return `Hoa-don-${customer}-${code}.png`;
+}
 
 function QR({order,settings}:{order:Order;settings:{bank_id:string;bank_account:string;bank_owner:string}}){
   if(!settings.bank_id.trim()||!settings.bank_account.trim()) return null;
@@ -37,7 +49,7 @@ export function InvoiceContent({order,carton,settings}:{order:Order;carton?:Cart
   const beforeManualDiscount=cartonValue?cartonValue.carton_count*cartonValue.price_per_carton:order.subtotal;
   const manualDiscount=cartonValue?Math.max(0,order.discount-cartonValue.bulk_discount):order.discount;
 
-  return <article className="invoice-sheet cafe-receipt" aria-label={`Hóa đơn ${order.code}`}>
+  return <article className="invoice-sheet cafe-receipt tn23-readable" aria-label={`Hóa đơn ${order.code}`}>
     <header className="receipt-header">
       <img className="receipt-logo" src="/brand/logo-doc-sang.png" alt="Logo Vườn Lan Thanh Nhã"/>
       <h1>{settings.shop_name}</h1>
@@ -49,22 +61,23 @@ export function InvoiceContent({order,carton,settings}:{order:Order;carton?:Cart
     </header>
 
     <div className="receipt-info">
-      <div><span>Mã đơn</span><strong>{order.code}</strong></div>
+      <div className="tn23-code"><span>Mã đơn</span><strong>{order.code}</strong></div>
       <div><span>Ngày bán</span><span>{created}</span></div>
-      <div><span>Khách hàng</span><strong>{order.customer_name}</strong></div>
-      {order.customer_phone&&<div><span>Điện thoại</span><span>{order.customer_phone}</span></div>}
+      <div className="tn23-customer"><span>Khách hàng</span><strong>{order.customer_name}</strong></div>
+      {order.customer_phone&&<div className="tn23-contact"><span>Điện thoại</span><span>{order.customer_phone}</span></div>}
       {!counter&&order.customer_address&&<div className="receipt-address-line"><span>Giao đến</span><span>{order.customer_address}</span></div>}
       {order.tracking_code&&<div><span>Vận đơn</span><strong>{order.tracking_code}</strong></div>}
     </div>
 
     <div className="receipt-separator" aria-hidden="true"/>
-    <div className="receipt-line-header"><span>SẢN PHẨM</span><span>THÀNH TIỀN</span></div>
+    <div className="receipt-line-header"><span>SẢN PHẨM</span></div>
     <div className="receipt-items">
-      {order.items.map((item,index)=><div className="receipt-item" key={item.id}>
-        <div className="receipt-product-name"><span>{index+1}. {item.product_name}</span><strong>{money(isCarton&&cartonValue?beforeManualDiscount:item.line_subtotal)}</strong></div>
-        {item.variant_label&&<div className="receipt-variant">{item.variant_label}</div>}
-        {isCarton&&cartonValue?<div className="receipt-quantity">{cartonValue.carton_count} thùng × {cartonValue.units_per_carton} cây = {quantity} cây</div>:<div className="receipt-quantity">{item.quantity} × {money(item.unit_price)}</div>}
-        {isCarton&&cartonValue&&<div className="receipt-quantity">Đơn giá thùng: {money(cartonValue.price_per_carton)}</div>}
+      {order.items.map((item)=><div className="receipt-item" key={item.id}>
+        <div className="tn233-name">{item.product_name}</div>
+        {item.variant_label&&item.variant_label.trim().toLowerCase()!=='mặc định'&&<div className="receipt-variant">{item.variant_label}</div>}
+        {isCarton&&cartonValue?<div className="tn233-quantity">Số lượng: <strong>{cartonValue.carton_count} thùng ({quantity} cây)</strong></div>:<div className="tn233-quantity">Số lượng: <strong>{item.quantity}</strong></div>}
+        <div className="tn233-price">Giá: <strong>{money(isCarton&&cartonValue?beforeManualDiscount:item.line_subtotal)}</strong></div>
+        {isCarton&&cartonValue&&<div className="tn233-unit">Đơn giá mỗi thùng: {money(cartonValue.price_per_carton)} ({cartonValue.units_per_carton} cây/thùng)</div>}
       </div>)}
     </div>
     <div className="receipt-count">Tổng số lượng: <strong>{isCarton&&cartonValue?`${cartonValue.carton_count} thùng / ${quantity} cây`:`${quantity} sản phẩm`}</strong></div>
@@ -162,7 +175,7 @@ export function InvoicePage(){
       const url=URL.createObjectURL(blob);
       const a=document.createElement('a');
       a.href=url;
-      a.download=`Hoa-don-${order?.code||'Thanh-Nha'}.png`;
+      a.download=invoiceImageFileName(order);
       a.click();
       setTimeout(()=>URL.revokeObjectURL(url),2000);
     }catch(e){
@@ -174,7 +187,7 @@ export function InvoicePage(){
     setBusy(true); setMsg('');
     try{
       const blob=await toBlob();
-      const file=new File([blob],`Hoa-don-${order?.code||'Thanh-Nha'}.png`,{type:'image/png'});
+      const file=new File([blob],invoiceImageFileName(order),{type:'image/png'});
       if(navigator.share&&navigator.canShare?.({files:[file]})){
         await navigator.share({files:[file],title:`Hóa đơn ${order?.code}`});
       }else{
