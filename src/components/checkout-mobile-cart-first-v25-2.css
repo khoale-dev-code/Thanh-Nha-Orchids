@@ -1,0 +1,54 @@
+/* V25.2 - Mobile only: editable cart comes BEFORE the product picker. */
+/* Desktop and the customer/payment stages keep their existing layout. */
+@media (max-width: 767px) {
+  .tn20-checkout[data-mobile-step="2"] .order-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) !important;
+    gap: 12px;
+    align-items: start;
+  }
+  .tn20-checkout[data-mobile-step="2"] .order-layout > .checkout-sticky {
+    grid-column: 1;
+    grid-row: 1;
+    order: -1;
+    position: static !important;
+    min-width: 0;
+  }
+  .tn20-checkout[data-mobile-step="2"] .order-layout > .tn20-product-panel {
+    grid-column: 1;
+    grid-row: 2;
+    order: 1;
+    min-width: 0;
+  }
+  /* In product selection, only the real editable cart is needed. */
+  .tn20-checkout[data-mobile-step="2"] .tn25-pocket-cart {
+    display: none !important;
+  }
+  .tn20-checkout[data-mobile-step="2"] .tn20-cart-block {
+    display: block !important;
+    margin-bottom: 0 !important;
+    min-width: 0;
+    max-height: min(43dvh, 350px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-gutter: stable;
+  }
+  .tn20-checkout[data-mobile-step="2"] .tn20-cart-block > .panel-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 0 0 10px;
+    background: #fff;
+  }
+  /* Remove misleading 2-then-1 substep counters after visual reordering. */
+  .tn20-checkout[data-mobile-step="2"] .tn20-cart-block .badge-number,
+  .tn20-checkout[data-mobile-step="2"] .tn20-product-panel .badge-number {
+    display: none !important;
+  }
+  .tn20-checkout[data-mobile-step="2"] .tn20-cart-block .cart-line {
+    min-width: 0;
+  }
+  .tn20-checkout[data-mobile-step="2"] .tn20-product-panel .searchbox {
+    margin-top: 2px;
+  }
+}

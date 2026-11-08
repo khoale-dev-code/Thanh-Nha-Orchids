@@ -1,10 +1,10 @@
 'use client';
-import {useEffect,useMemo,useState} from 'react';
+import {useDeferredValue,useEffect,useMemo,useState} from 'react';
 import {useRouter} from 'next/navigation';
 import {Flower2,Search,Plus,Minus,ShoppingBag,UserRoundPlus,PackagePlus,CheckCircle2,ArrowRight,Store,Truck,Info} from 'lucide-react';
 import {Shell} from './shell';
 import {useStore} from '@/context/store';
-import {money,safeNonNeg,variantsOf} from '@/lib/math';
+import {money,safeNonNeg} from '@/lib/math';
 import type {OrderDraft,CartonOrderDraft} from '@/lib/types';
 import {listPendingLeads,finishLead,type LeadRow} from '@/lib/family-operations';
 import {CheckoutCustomerV11,type CustomerSource} from './checkout-customer-v11';
@@ -14,6 +14,9 @@ import {PosMoneyInput} from './pos-money-input';
 import './checkout-mobile-v20.css';
 import {QuickProductV24} from './quick-product-v24';
 import './checkout-live-v24.css';
+import {buildCheckoutProductIndex,searchCheckoutProducts} from '@/lib/checkout-product-search-v25';
+import './checkout-search-cart-v25.css';
+import './checkout-mobile-cart-first-v25-2.css';
 
 type SaleMode='delivery'|'instore';
 
@@ -27,6 +30,11 @@ export function NewOrder(){
   const [unitsPerCarton,setUnitsPerCarton]=useState(100);
   const [pricePerCarton,setPricePerCarton]=useState(0);
   const [search,setSearch]=useState('');
+  const deferredSearch=useDeferredValue(search);
+  const [resultLimit,setResultLimit]=useState(12);
+  const [showSelected,setShowSelected]=useState(false);
+  const [pickFeedback,setPickFeedback]=useState<{message:string;id:number}|null>(null);
+  useEffect(()=>{if(!pickFeedback)return;const t=window.setTimeout(()=>setPickFeedback(null),2200);return()=>window.clearTimeout(t);},[pickFeedback]);
   const [mobileStep,setMobileStep]=useState<1|2|3>(1);
   const [customerId,setCustomerId]=useState('');
   const [customerSource,setCustomerSource]=useState<CustomerSource>('walkin');
@@ -115,9 +123,12 @@ export function NewOrder(){
     setUnitMode('retail');
     setCart(prev=>prev.some(x=>x.id===match.v.id)?prev:[...prev,{id:match.v.id,qty:1}]);
     setPendingQuickSku('');
+    setPickFeedback({message:`Đã thêm ${match.p.name} vào giỏ`,id:Date.now()});
   },[data.products,pendingQuickSku]);
   const selected=data.customers.find(x=>x.id===customerId);
-  const foundItems=variantsOf(data.products,search);
+  const searchIndex=useMemo(()=>buildCheckoutProductIndex(data.products),[data.products]);
+  const searchResults=useMemo(()=>searchCheckoutProducts(searchIndex,deferredSearch,resultLimit),[searchIndex,deferredSearch,resultLimit]);
+  const foundItems=searchResults.items;
   const chosen=useMemo(()=>cart.map(({id,qty})=>{
     const found=data.products.flatMap(p=>p.variants.map(v=>({p,v}))).find(x=>x.v.id===id);
     return found?{...found,qty}:null;
@@ -146,19 +157,32 @@ export function NewOrder(){
     setPaid(next==='instore');
   };
   const pickCarton=(id:string)=>{
-    const v=data.products.flatMap(p=>p.variants).find(x=>x.id===id);
-    if(!v)return;
+    const p=data.products.find(p=>p.variants.some(v=>v.id===id));
+    const v=p?.variants.find(x=>x.id===id);
+    if(!p||!v)return;
     setCartonVariantId(id);
     setPricePerCarton(v.price*unitsPerCarton);
+    setPickFeedback({message:`Đã chọn bán thùng: ${p.name}`,id:Date.now()});
   };
   const updatePackSize=(raw:number)=>{
     const size=Math.min(1000,Math.max(1,Math.trunc(raw)||1));
     setUnitsPerCarton(size);
     if(selectedCarton)setPricePerCarton(selectedCarton.v.price*size);
   };
-  const add=(id:string)=>setCart(prev=>prev.some(x=>x.id===id)
-    ?prev.map(x=>x.id===id?{...x,qty:Math.min(10000,x.qty+1)}:x)
-    :[...prev,{id,qty:1}]);
+  const add=(id:string)=>{
+    const p=data.products.find(p=>p.variants.some(v=>v.id===id));
+    const v=p?.variants.find(x=>x.id===id);
+    if(!p||!v)return;
+    const count=cart.find(x=>x.id===id)?.qty||0;
+    if(count>=10000||(v.stock_quantity!==null&&count>=v.stock_quantity)){
+      setPickFeedback({message:`${p.name}: đã đạt số lượng có thể bán`,id:Date.now()});
+      return;
+    }
+    setCart(prev=>prev.some(x=>x.id===id)
+      ?prev.map(x=>x.id===id?{...x,qty:Math.min(10000,v.stock_quantity??10000,x.qty+1)}:x)
+      :[...prev,{id,qty:1}]);
+    setPickFeedback({message:`Đã thêm ${p.name} vào giỏ`,id:Date.now()});
+  };
   const change=(id:string,delta:number)=>setCart(prev=>prev.map(x=>x.id===id?{...x,qty:x.qty+delta}:x).filter(x=>x.qty>0));
 
   const create=async()=>{
@@ -305,8 +329,32 @@ export function NewOrder(){
     <div className="order-layout">
       <section className="panel tn20-product-panel">
         <div className="panel-head"><div><h2><span className="badge-number" style={{display:'inline-grid',marginRight:8}}>1</span> Chọn sản phẩm</h2><p>{unitMode==='carton'?'Chọn một biến thể để đóng thùng':'Chạm vào sản phẩm để thêm vào đơn'}</p></div><div className="tn24-product-actions"><button type="button" className="btn btn-soft btn-sm tn24-quick-btn" onClick={()=>setShowQuickProduct(true)}><PackagePlus size={16}/> Thêm nhanh</button><button type="button" className="btn btn-outline btn-sm tn24-full-btn" onClick={()=>setShowProduct(true)}>Chi tiết</button></div></div>
-        <div className="searchbox"><Search size={18}/><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Tìm tên, màu hoa, kích thước hoặc mã..." aria-label="Tìm sản phẩm"/></div>
-        <div className="product-choice-grid">{foundItems.slice(0,60).map(({product:p,variant:v})=><button className="product-choice" key={v.id} disabled={v.stock_quantity===0} onClick={()=>unitMode==='carton'?pickCarton(v.id):add(v.id)} aria-pressed={unitMode==='carton'&&cartonVariantId===v.id}><span className="flower-square"><Flower2 size={21}/></span><span style={{minWidth:0,flex:1}}><strong>{p.name}</strong><small>{v.label} {v.stock_quantity!==null?`• Còn ${v.stock_quantity}`:''}</small><b>{v.stock_quantity===0?'Hết hàng':money(v.price)}</b></span><Plus className="add-icon" size={18}/></button>)}</div>
+        <div className="searchbox"><Search size={18}/><input type="search" inputMode="search" enterKeyHint="search" value={search} onChange={e=>{setSearch(e.target.value);setResultLimit(12);}} placeholder="Tìm tên, không dấu, hoặc gõ gần đúng..." aria-label="Tìm sản phẩm"/></div>
+        {hasProducts&&<section className="tn25-pocket-cart" aria-label="Giỏ hàng đã chọn">
+          <div className="tn25-pocket-head">
+            <div className="tn25-pocket-title"><ShoppingBag size={19}/><div><strong>Đã chọn {unitMode==='carton'?`${cartonCount} thùng`:`${cart.reduce((sum,x)=>sum+x.qty,0)} món`}</strong><span>{money(subtotal)}</span></div></div>
+            <button type="button" className="tn25-pocket-toggle" aria-expanded={showSelected} onClick={()=>setShowSelected(x=>!x)}>{showSelected?'Thu gọn':'Xem / sửa giỏ'}</button>
+          </div>
+          {showSelected&&<div className="tn25-pocket-items">
+            {unitMode==='carton'?(selectedCarton&&<div className="tn25-pocket-line"><span><b>{selectedCarton.p.name}</b><small>{cartonCount} thùng · {totalPlants} cây</small></span><strong>{money(cartonSubtotal)}</strong></div>):chosen.map(({p,v,qty})=><div className="tn25-pocket-line" key={v.id}>
+              <span><b>{p.name}</b><small>{v.label} · {money(v.price)}</small></span>
+              <div className="tn25-pocket-qty"><button type="button" onClick={()=>change(v.id,-1)} aria-label={`Giảm số lượng ${p.name}`}><Minus size={15}/></button><strong>{qty}</strong><button type="button" onClick={()=>change(v.id,1)} disabled={qty>=10000||(v.stock_quantity!==null&&qty>=v.stock_quantity)} aria-label={`Tăng số lượng ${p.name}`}><Plus size={15}/></button></div>
+            </div>)}
+            {unitMode==='carton'&&<p className="tn25-pocket-note">Sửa số thùng, số cây và giá trong mục Thông tin thùng hàng bên dưới.</p>}
+          </div>}
+        </section>}
+        <div className="tn25-result-note" aria-live="polite">{search.trim()?searchResults.fuzzy?'Kết quả gần đúng (có thể khác chính tả)':deferredSearch!==search?'Đang tìm...':`Kết quả cho “${search}”`:'Danh sách sản phẩm'}</div>
+        <div className="product-choice-grid">{foundItems.map(({product:p,variant:v})=>{
+          const qty=cart.find(x=>x.id===v.id)?.qty||0;
+          const picked=unitMode==='carton'?cartonVariantId===v.id:qty>0;
+          const full=unitMode==='retail'&&(qty>=10000||(v.stock_quantity!==null&&qty>=v.stock_quantity));
+          return <button type="button" className={`product-choice tn25-product ${picked?'tn25-picked':''}`} key={v.id} disabled={v.stock_quantity===0||full} onClick={()=>unitMode==='carton'?pickCarton(v.id):add(v.id)} aria-pressed={picked} aria-label={`${p.name}, ${v.label}, ${money(v.price)}${picked?`, đã chọn ${unitMode==='carton'?1:qty}`:''}`}>
+            <span className="flower-square"><Flower2 size={21}/></span>
+            <span className="tn25-product-main"><strong>{p.name}</strong><small>{v.label} {v.stock_quantity!==null?`• Còn ${v.stock_quantity}`:''}</small><b>{v.stock_quantity===0?'Hết hàng':money(v.price)}</b>{picked&&<em className="tn25-picked-label">{unitMode==='carton'?'Đã chọn thùng':`Đã chọn ×${qty}`}</em>}</span>
+            <span className="tn25-product-action">{picked?<CheckCircle2 size={22}/>:<Plus size={20}/>}</span>
+          </button>;
+        })}</div>
+        {searchResults.hasMore&&<button type="button" className="tn25-load-more" onClick={()=>setResultLimit(n=>n+12)}>Xem thêm 12 sản phẩm <ArrowRight size={17}/></button>}
         {!foundItems.length&&<div className="empty"><Flower2 size={36}/><h3>Chưa tìm thấy sản phẩm</h3><p>Chọn “Thêm nhanh” để tạo sản phẩm mà không rời màn hình chốt đơn.</p></div>}
       </section>
 
@@ -390,6 +438,7 @@ export function NewOrder(){
         </div>
       </section></div>
     </div>
+    {pickFeedback&&<div key={pickFeedback.id} className="tn25-pick-toast" role="status" aria-live="polite"><CheckCircle2 size={18}/><span>{pickFeedback.message}</span></div>}
     <div className="tn20-mobile-actions">
       {mobileStep>1&&<button type="button" className="tn20-back" onClick={()=>goMobileStep(mobileStep===3?2:1)}>Quay lại</button>}
       {mobileStep<3&&<button type="button" className="tn20-next" onClick={()=>goMobileStep(mobileStep===1?2:3)}>
