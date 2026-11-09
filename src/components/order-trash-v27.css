@@ -1,0 +1,36 @@
+/* V27: trash tab. Uses existing brand palette and mobile 320px layout. */
+.tn27-switch{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 16px}
+.tn27-switch button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:10px 16px;border-radius:12px;border:1px solid #d5e7db;background:#fff;color:#355942;font:inherit;font-weight:750;cursor:pointer}
+.tn27-switch button.active{background:#e9f7ee;border-color:#0e9051;color:#0b7541}
+.tn27-trash-panel{background:#fff;border:1px solid #e0e9e3;border-radius:19px;padding:19px;display:grid;gap:16px;min-width:0}
+.tn27-trash-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.tn27-trash-heading>div{flex:1;min-width:220px}
+.tn27-trash-heading h2{display:flex;gap:9px;align-items:center;color:#17492d;font-size:20px;margin:0}
+.tn27-trash-heading p{font-size:13px;line-height:1.65;color:#6b8173;margin:7px 0 0}
+.tn27-refresh{border:1px solid #d4e5d8;border-radius:10px;background:#f4faf6;color:#21643f;min-height:41px;padding:9px 11px;display:inline-flex;gap:7px;align-items:center;font-weight:700}
+.tn27-trash-search{display:flex;align-items:center;gap:8px;min-width:0}
+.tn27-trash-search svg{flex:0 0 18px;color:#688675}
+.tn27-trash-search input{flex:1;min-width:0;font-size:16px}
+.tn27-trash-policy{display:flex;gap:9px;align-items:flex-start;background:#fff9ec;border:1px solid #f1e0be;border-radius:12px;padding:12px;color:#795925;font-size:12px;line-height:1.6}
+.tn27-trash-policy svg{flex:0 0 18px;margin-top:2px}
+.tn27-trash-list{display:grid;gap:11px}
+.tn27-trash-card{border:1px solid #e1ece4;border-radius:15px;padding:14px;display:grid;gap:12px;min-width:0}
+.tn27-trash-top,.tn27-trash-bottom{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.tn27-trash-top>div{display:grid;gap:3px;min-width:0}
+.tn27-trash-top strong{color:#254e36;font-size:15px}
+.tn27-trash-top span{color:#6b8173;font-size:13px;overflow-wrap:anywhere}
+.tn27-days{display:inline-flex;align-items:center;gap:6px;border-radius:99px;background:#f6f1e6;color:#805d25!important;padding:6px 9px;font-weight:750;white-space:nowrap}
+.tn27-trash-products{display:flex;flex-wrap:wrap;gap:6px}
+.tn27-trash-products span{font-size:12px;background:#f3f8f4;border-radius:7px;padding:5px 9px;color:#52715b}
+.tn27-trash-bottom{border-top:1px solid #ecf1ed;padding-top:12px}
+.tn27-trash-bottom>div{display:grid;gap:3px}
+.tn27-trash-bottom small{color:#799083;font-size:11px}
+.tn27-trash-bottom strong{font-size:17px;color:#204d34}
+.tn27-trash-bottom button{display:inline-flex;justify-content:center;align-items:center;gap:7px;min-height:44px;background:#0a874d;border:0;border-radius:11px;padding:10px 15px;color:#fff;font-weight:800;cursor:pointer}
+.tn27-trash-bottom button:disabled{opacity:.5;cursor:not-allowed}
+.tn27-trash-delete{display:inline-flex;align-items:center;justify-content:center;min-height:40px;gap:5px;color:#9f453c;border:1px solid #f0d2cf;border-radius:10px;background:#fff7f6;padding:7px 10px;font-size:12px;font-weight:750;cursor:pointer}
+.tn27-trash-delete:disabled{opacity:.4;cursor:not-allowed}
+.tn27-trash-card .tn27-trash-delete{width:100%}
+.tn27-empty{text-align:center;color:#829689;padding:40px 15px;border:1px dashed #d9e5dc;border-radius:14px}
+.tn27-success{font-size:13px;color:#0b7941;background:#e9f9ef;padding:11px;border-radius:10px}
+@media(max-width:767px){.tn27-trash-panel{padding:14px;border-radius:16px}.tn27-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.tn27-switch button{padding:10px 6px;font-size:13px;min-width:0}.tn27-trash-heading h2{font-size:17px}.tn27-trash-bottom button{flex:1}.tn27-trash-products{max-height:95px;overflow:auto}}

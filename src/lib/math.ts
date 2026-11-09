@@ -13,7 +13,7 @@ export function buildLocalOrder(data:Database,draft:OrderDraft):Order {
   const price=safeNonNeg(found.v.price);const cost=found.v.cost_price===null?null:safeNonNeg(found.v.cost_price);
   const lineSubtotal=q*price;const tax=0;
   const lineCost=q*(cost??0); subtotal+=lineSubtotal;tax_total+=tax;cost_total+=lineCost;
-  return {id:crypto.randomUUID(),order_id:'',product_name:found.p.name,variant_label:found.v.label,sku:found.v.sku,quantity:q,unit_price:price,unit_cost:cost,tax_rate:found.p.tax_rate,line_subtotal:lineSubtotal,line_tax:tax,line_cost:lineCost};
+  return {id:crypto.randomUUID(),order_id:'',variant_id,product_name:found.p.name,variant_label:found.v.label,sku:found.v.sku,quantity:q,unit_price:price,unit_cost:cost,tax_rate:found.p.tax_rate,line_subtotal:lineSubtotal,line_tax:tax,line_cost:lineCost};
  });
  if(items.length===0)throw new Error('Cần chọn ít nhất một sản phẩm');
  const discount=safeNonNeg(draft.discount);if(discount>subtotal)throw new Error('Giảm giá vượt tổng tiền hàng');

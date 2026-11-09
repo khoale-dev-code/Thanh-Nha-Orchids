@@ -1,0 +1,27 @@
+/* Thanh Nha V26: edit an unshipped order and reprint without changing its code. */
+.tn26-backdrop{position:fixed;inset:0;z-index:180;display:flex;justify-content:center;align-items:center;background:rgba(8,27,17,.58);padding:16px}
+.tn26-editor{width:min(680px,100%);max-height:min(92dvh,940px);min-width:0;display:flex;flex-direction:column;overflow:hidden;border:1px solid #e0ebe2;border-radius:22px;background:#fff;box-shadow:0 20px 80px rgba(5,25,14,.24);color:#183827}
+.tn26-head{padding:18px 20px 15px;display:flex;justify-content:space-between;gap:12px;background:#f3faf5;border-bottom:1px solid #e2eee6}
+.tn26-head>div{min-width:0}.tn26-head small{color:#16804b;font-weight:850;letter-spacing:.06em;font-size:11px}
+.tn26-head h2{margin:3px 0;font-size:22px;font-weight:850;color:#16442a}.tn26-head p{margin:4px 0 0;font-size:12px;color:#597b63;line-height:1.5}
+.tn26-icon{flex:0 0 42px;width:42px;height:42px;display:grid;place-items:center;background:#e6f1e9;border:0;border-radius:12px;color:#195133}
+.tn26-body{overflow:auto;min-height:0;padding:18px 20px 30px;display:grid;gap:12px;overscroll-behavior:contain}
+.tn26-body h3{font-size:14px;margin:5px 0 0;font-weight:850;color:#204531}
+.tn26-item{display:flex;gap:12px;justify-content:space-between;align-items:center;min-width:0;background:#fafdfa;border:1px solid #e3ede6;border-radius:14px;padding:12px}
+.tn26-item-name{display:grid;gap:3px;min-width:0;flex:1}.tn26-item-name strong{font-size:15px;line-height:1.35;overflow-wrap:anywhere}.tn26-item-name span{font-size:12px;color:#63816d;line-height:1.4}
+.tn26-item-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}.tn26-qty{display:grid;grid-template-columns:40px 50px 40px;border:1px solid #d6e8db;border-radius:11px;overflow:hidden;background:#fff}
+.tn26-qty button{border:0;background:#eef8f1;color:#156842;min-height:42px;display:grid;place-items:center}.tn26-qty input{min-width:0;width:100%;height:42px;border:0;border-inline:1px solid #e4eee7;border-radius:0;text-align:center;font-size:16px;font-weight:800;color:#1f4630;-moz-appearance:textfield;appearance:textfield;padding:0}
+.tn26-qty input::-webkit-outer-spin-button,.tn26-qty input::-webkit-inner-spin-button{display:none}
+.tn26-remove{width:42px;height:42px;border:1px solid #f2dcd9;border-radius:11px;background:#fff5f3;color:#b0443d;display:grid;place-items:center}
+.tn26-item-actions button:disabled{opacity:.45}.tn26-product-search{display:grid;gap:10px;margin-top:8px;border-top:1px solid #e4eee7;padding-top:14px}
+.tn26-search{display:flex;align-items:center;gap:9px;border:1px solid #cddfd3;border-radius:12px;padding:0 12px;background:#fff;color:#397050}
+.tn26-search input{height:49px;width:100%;min-width:0;font-size:16px;outline:none;border:0;background:transparent;color:#163926}
+.tn26-suggestions{display:grid;gap:6px;max-height:205px;overflow:auto;overscroll-behavior:contain}.tn26-suggestions>button{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;min-height:51px;border:1px solid #e3ede7;border-radius:11px;background:#fff;text-align:left;color:#196b43}
+.tn26-suggestions>button>span{display:grid;gap:2px;min-width:0}.tn26-suggestions b{font-size:13px;color:#234431}.tn26-suggestions small{font-size:11px;color:#718a78}.tn26-suggestions>p{font-size:12px;color:#688071}
+.tn26-summary{display:grid;gap:8px;margin-top:6px;border-top:1px dashed #b7d5bf;padding-top:15px}.tn26-summary>div{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:#42604c}.tn26-summary b{color:#1d402b}.tn26-summary .tn26-total{padding-top:10px;border-top:1px solid #e3eee5;font-weight:850;color:#183d26}.tn26-total strong{font-size:20px;color:#076e41}.tn26-summary>p{font-size:12px;line-height:1.55;margin:3px 0;color:#795526}
+.tn26-warning,.tn26-error{margin:0;padding:12px;border-radius:12px;font-size:13px;line-height:1.55;background:#fff3e6;color:#805315;border:1px solid #f4dbb6}.tn26-error{background:#fff0ee;color:#a33f37;border-color:#f0d2ce}
+.tn26-footer{display:flex;gap:9px;align-items:center;padding:12px 20px calc(15px + env(safe-area-inset-bottom));border-top:1px solid #e3eee6;background:#fff}
+.tn26-footer button{min-height:48px;border-radius:12px;font-size:14px;font-weight:850;padding:10px 14px}.tn26-cancel{flex:0 0 auto;background:#f3f8f4;color:#3b5e48;border:1px solid #dce9e0}.tn26-save{flex:1;display:flex;justify-content:center;align-items:center;gap:8px;background:#087d47;color:#fff;border:0}.tn26-save:disabled{opacity:.45;cursor:not-allowed}
+.print-actions .tn26-print-edit{background:#ecf7ef;color:#146b42;border:1px solid #bbdfc6}
+@media(max-width:767px){.tn26-backdrop{padding:0;align-items:flex-end}.tn26-editor{width:100%;max-height:95dvh;border-radius:22px 22px 0 0;border-bottom:0}.tn26-head{padding:17px 16px 13px}.tn26-body{padding:14px 13px 28px}.tn26-head h2{font-size:19px}.tn26-item{flex-wrap:wrap}.tn26-item-actions{width:100%;justify-content:space-between}.tn26-qty{grid-template-columns:46px 64px 46px}.tn26-qty button,.tn26-qty input{min-height:46px;height:46px}.tn26-remove{width:46px;height:46px}.tn26-footer{padding:11px 13px calc(13px + env(safe-area-inset-bottom))}}
+@media print{.tn26-backdrop,.tn26-print-edit{display:none!important}}

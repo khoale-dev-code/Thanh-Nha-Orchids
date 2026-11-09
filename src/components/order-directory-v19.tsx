@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import {CalendarDays,ChevronRight,CircleX,ClipboardList,Package,Printer,Search,UserRound,Wallet} from 'lucide-react';
+import {CalendarDays,ChevronRight,CircleX,ClipboardList,Package,Printer,Search,UserRound,Wallet, Trash2} from 'lucide-react';
 import {money,orderStatuses,colorForStatus} from '@/lib/math';
 import type {Order,OrderStatus} from '@/lib/types';
 import './order-directory-v19.css';
@@ -15,6 +15,8 @@ type Props={
   status:string;
   onStatusChange:(value:string)=>void;
   onOpen:(order:Order)=>void;
+  onTrash:(order:Order)=>Promise<void>;
+  trashBusy:boolean;
 };
 
 const filters:{id:FilterValue;label:string}[]=[
@@ -28,7 +30,7 @@ const filters:{id:FilterValue;label:string}[]=[
   {id:'cancelled',label:'Đã hủy'},
 ];
 
-export function OrderDirectoryV19({orders,rows,filter,onFilterChange,status,onStatusChange,onOpen}:Props){
+export function OrderDirectoryV19({orders,rows,filter,onFilterChange,status,onStatusChange,onOpen,onTrash,trashBusy}:Props){
   const filterCounts:Record<string,number>={all:orders.length};
   for(const order of orders){
     filterCounts[order.status]=(filterCounts[order.status]||0)+1;
@@ -92,6 +94,7 @@ export function OrderDirectoryV19({orders,rows,filter,onFilterChange,status,onSt
           <div className="tn19-card-actions">
             <button className="tn19-detail-button" type="button" onClick={()=>onOpen(order)}>Xem chi tiết <ChevronRight size={18}/></button>
             <Link className="tn19-invoice-link" href={`/print/${order.id}`} aria-label={`Xem hóa đơn ${order.code}`}><Printer size={17}/><span>Hóa đơn</span></Link>
+            {order.payment_status==='unpaid'&&['new','confirmed','packing','cancelled'].includes(order.status)&&order.shipping_provider!=='Bán trực tiếp'&&!order.tracking_code&&!order.shipping_status&&(!order.shipping_request_state||order.shipping_request_state==='idle')&&<button type="button" className="tn27-trash-delete" disabled={trashBusy} onClick={()=>void onTrash(order)}><Trash2 size={15}/> Thùng rác</button>}
           </div>
         </article>;
       })}

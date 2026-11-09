@@ -1,6 +1,6 @@
 'use client';
 import {createContext,useContext,useEffect,useMemo,useState,useCallback} from 'react';
-import type {Database,Order,OrderDraft,Product,Customer,Settings,NewProduct,NewCustomer,DayReport,OrderStatus,PaymentStatus,CartonOrderDraft,CartonDetails} from '@/lib/types';
+import type {Database,Order,OrderDraft,Product,Customer,Settings,NewProduct,NewCustomer,DayReport,OrderStatus,PaymentStatus,CartonOrderDraft,CartonDetails,OrderItemsCorrectionV26} from '@/lib/types';
 import {seededDemo,defaultSettings} from '@/lib/demo';
 import {buildLocalOrder,dailyReport} from '@/lib/math';
 import {browserDb,isCloudMode} from '@/lib/supabase';
@@ -16,6 +16,7 @@ interface StoreApi {data:Database;ready:boolean;busy:boolean;cloud:boolean;email
  createWalkInOrder:(draft:OrderDraft,requestId:string)=>Promise<Order>;
  createCartonOrder:(draft:CartonOrderDraft,requestId:string)=>Promise<Order>;
  patchOrder:(id:string,patch:OrderPatch)=>Promise<void>;
+ editOrderItemsV26:(id:string,expectedUpdatedAt:string,items:OrderItemsCorrectionV26[])=>Promise<Order>;
  saveSettings:(s:Settings)=>Promise<void>;
  getReport:(from:string,to:string)=>Promise<DayReport[]>;
 }
@@ -38,7 +39,7 @@ export function StoreProvider({children}:{children:React.ReactNode}){
   const [p,c,o,s]=await Promise.all([
    db.from('products').select('*,variants:product_variants(*)').order('created_at',{ascending:false}),
    db.from('customers').select('*').order('created_at',{ascending:false}),
-   db.from('orders').select('*,items:order_items(*)').order('created_at',{ascending:false}).limit(500),
+   db.from('orders').select('*,items:order_items(*)').is('deleted_at',null).order('created_at',{ascending:false}).limit(500),
    db.from('app_settings').select('*').eq('id',true).single()
   ]);
   for(const x of [p,c,o,s])if(x.error)throw new Error(x.error.message);
@@ -214,6 +215,78 @@ export function StoreProvider({children}:{children:React.ReactNode}){
     await load();
   });return created!;
  };
+ const editOrderItemsV26=async(id:string,expectedUpdatedAt:string,items:OrderItemsCorrectionV26[]):Promise<Order>=>{
+  let updated:Order|null=null;
+  await mutate(async()=>{
+    if(!Array.isArray(items)||items.length<1||items.length>100)fail('Giỏ sửa phải có từ 1 đến 100 sản phẩm.');
+    const order=data.orders.find(o=>o.id===id);
+    if(!db){
+      if(!order)fail('Không tìm thấy đơn hàng.');
+      if(order.updated_at!==expectedUpdatedAt)fail('Đơn đã thay đổi, hãy tải lại.');
+      if(!['new','confirmed','packing'].includes(order.status)||order.shipping_provider==='Bán trực tiếp'||order.carton||order.tracking_code||order.shipping_request_state!=='idle')fail('Đơn đã giao, tạo vận đơn hoặc bán thùng không thể sửa ở đây.');
+      const oldLine=new Map(order.items.map(i=>[i.id,i]));
+      const variantFor=(line:typeof order.items[number])=>line.variant_id||data.products.flatMap(p=>p.variants).find(v=>v.sku&&v.sku===line.sku)?.id||'';
+      const seen=new Set<string>();
+      const nextItems=items.map(entry=>{
+        if(!Number.isInteger(entry.quantity)||entry.quantity<1||entry.quantity>10000)fail('Số lượng phải trong khoảng 1 đến 10000.');
+        if(!!entry.line_id===!!entry.variant_id)fail('Mỗi dòng phải có mã dòng cũ hoặc sản phẩm mới.');
+        let item:typeof order.items[number];
+        let vid:string;
+        if(entry.line_id){
+          const original=oldLine.get(entry.line_id);
+          if(!original)fail('Dòng hàng không nằm trong đơn.');
+          vid=variantFor(original);
+          if(!vid)fail('Không xác định được mã tồn kho của dòng cũ.');
+          item={...original,variant_id:vid,quantity:entry.quantity};
+        }else{
+          vid=entry.variant_id!;
+          const found=data.products.flatMap(p=>p.variants.map(v=>({p,v}))).find(x=>x.v.id===vid);
+          if(!found||!found.p.active||!found.v.active)fail('Sản phẩm thêm mới không còn được bán.');
+          item={id:crypto.randomUUID(),order_id:id,variant_id:vid,product_name:found.p.name,
+            variant_label:found.v.label,sku:found.v.sku,quantity:entry.quantity,
+            unit_price:found.v.price,unit_cost:found.v.cost_price,tax_rate:found.p.tax_rate,
+            line_subtotal:0,line_tax:0,line_cost:0};
+        }
+        if(seen.has(vid))fail('Sản phẩm bị lặp trong giỏ sửa.');
+        seen.add(vid);
+        return {...item,line_subtotal:item.unit_price*entry.quantity,
+          line_cost:(item.unit_cost??0)*entry.quantity};
+      });
+      const subtotal=nextItems.reduce((s,i)=>s+i.line_subtotal,0);
+      if(subtotal<order.discount)fail('Tiền hàng sau sửa không đủ bù giảm giá cũ.');
+      const priced=nextItems.map(i=>({...i,line_tax:Math.round((i.line_subtotal-(subtotal>0?order.discount*i.line_subtotal/subtotal:0))*i.tax_rate/100)}));
+      const tax_total=priced.reduce((s,i)=>s+i.line_tax,0);
+      const cost_total=priced.reduce((s,i)=>s+i.line_cost,0);
+      const total=subtotal-order.discount+tax_total+order.shipping_fee;
+      const oldQty=new Map<string,number>(),newQty=new Map<string,number>();
+      for(const line of order.items){const v=variantFor(line);if(v)oldQty.set(v,(oldQty.get(v)||0)+line.quantity);}
+      for(const line of priced){const v=line.variant_id!;newQty.set(v,(newQty.get(v)||0)+line.quantity);}
+      for(const p of data.products)for(const v of p.variants){
+        const prev=oldQty.get(v.id)||0,next=newQty.get(v.id)||0;
+        if((!p.active||!v.active)&&next>prev)fail('Không thể tăng sản phẩm đã ngừng bán.');
+        if(v.stock_quantity!==null&&v.stock_quantity+prev-next<0)fail(`Không đủ tồn kho của ${p.name}.`);
+      }
+      const payment_status=order.payment_status==='paid'&&total!==order.total?'unpaid':order.payment_status;
+      updated={...order,items:priced,subtotal,tax_total,cost_total,total,payment_status,updated_at:new Date().toISOString()};
+      const snapshot=updated as Order;
+      saveDemo(d=>({...d,orders:d.orders.map(o=>o.id===id?snapshot:o),products:d.products.map(p=>({...p,variants:p.variants.map(v=>v.stock_quantity===null?v:{...v,stock_quantity:v.stock_quantity+(oldQty.get(v.id)||0)-(newQty.get(v.id)||0)})}))}));
+      return;
+    }
+    const r=await db.rpc('edit_order_items_v26',{
+      p_order_id:id,p_expected_updated_at:expectedUpdatedAt,
+      p_items:items.map(x=>x.line_id?{line_id:x.line_id,quantity:x.quantity}:{variant_id:x.variant_id,quantity:x.quantity})
+    });
+    if(r.error){
+      if(/Could not find the function|schema cache|edit_order_items_v26/i.test(r.error.message))fail('Chưa cài migration 009_edit_order_items_v26.sql trên Supabase.');
+      fail(r.error.message);
+    }
+    const q=await db.from('orders').select('*,items:order_items(*)').eq('id',id).single();
+    if(q.error)fail(q.error.message);
+    updated=q.data as Order;
+    await load();
+  });
+  return updated!;
+ };
  const patchOrder=async(id:string,patch:OrderPatch)=>mutate(async()=>{
   const existing=data.orders.find(o=>o.id===id);
   if(!existing)fail('Không tìm thấy đơn hàng để sửa.');
@@ -232,6 +305,6 @@ export function StoreProvider({children}:{children:React.ReactNode}){
   const r=await db.rpc('report_daily',{p_from:from,p_to:to});if(r.error)throw new Error(r.error.message);
   return (r.data||[]).map((x:DayReport)=>({...x,order_count:Number(x.order_count),revenue:Number(x.revenue),cogs:Number(x.cogs),shipping_cost:Number(x.shipping_cost),tax_total:Number(x.tax_total),profit:Number(x.profit)}));
  },[data.orders,db]);
- return <C.Provider value={{data,ready,busy,cloud:isCloudMode,email,unauthorized,error,signIn,signOut,refresh,saveProduct,archiveProduct,saveCustomer,archiveCustomer,mergeCustomers,createOrder,createWalkInOrder,createCartonOrder,patchOrder,saveSettings,getReport}}>{children}</C.Provider>;
+ return <C.Provider value={{data,ready,busy,cloud:isCloudMode,email,unauthorized,error,signIn,signOut,refresh,saveProduct,archiveProduct,saveCustomer,archiveCustomer,mergeCustomers,createOrder,createWalkInOrder,createCartonOrder,patchOrder,editOrderItemsV26,saveSettings,getReport}}>{children}</C.Provider>;
 }
 export function useStore(){const x=useContext(C);if(!x)throw new Error('Missing StoreProvider');return x;}

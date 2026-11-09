@@ -7,6 +7,7 @@ import {useStore} from '@/context/store';
 import {browserDb} from '@/lib/supabase';
 import type {Order,CartonDetails} from '@/lib/types';
 import {money} from '@/lib/math';
+import {OrderItemsEditorV26,canEditOrderItemsV26} from './order-items-editor-v26';
 import './invoice-image-v15.css';
 import './invoice-items-v23-3-1.css';
 import './invoice-name-qty-row-v23-3-2.css';
@@ -111,6 +112,7 @@ export function InvoicePage(){
   const [busy,setBusy]=useState(false);
   const [msg,setMsg]=useState('');
   const [savedCarton,setSavedCarton]=useState<CartonDetails|null>(null);
+  const [showItemsEditor,setShowItemsEditor]=useState(false);
 
   useEffect(()=>{
     if(!ready) return;
@@ -205,16 +207,19 @@ export function InvoicePage(){
   };
 
   if(!ready) return <div className="loading-app">Đang chuẩn bị hóa đơn...</div>;
+  if(order?.deleted_at) return <div className="loading-app"><h2>Đơn đang ở Thùng rác</h2><p>Hãy khôi phục đơn trong Quản lý đơn hàng trước khi xem, in hoặc chia sẻ hóa đơn.</p><Link href="/orders" className="btn btn-primary">Về Quản lý đơn hàng</Link></div>;
   if(!order) return <div className="loading-app"><h2>Không tìm thấy hóa đơn</h2><p>Nếu đang ở chế độ demo, hóa đơn chỉ có trên thiết bị tạo đơn.</p><Link href="/orders" className="btn btn-primary">Quay lại danh sách đơn</Link></div>;
 
   return <div className="print-screen print-page">
     <div className="print-actions">
       <Link href="/orders" className="btn btn-outline"><ArrowLeft size={17}/> Đơn hàng</Link>
+      <button type="button" className="btn btn-outline tn26-print-edit" disabled={!canEditOrderItemsV26(order,!!savedCarton)||busy} onClick={()=>setShowItemsEditor(true)}>Sửa cây / số lượng</button>
       <button onClick={()=>window.print()} className="btn btn-primary"><Printer size={17}/> In hóa đơn 80mm</button>
       <button onClick={share} disabled={busy} className="btn btn-outline" title="Chọn RawBT hoặc ứng dụng in Android"><Printer size={17}/> In qua app Android</button>
       <button onClick={share} disabled={busy} className="btn btn-outline"><Share2 size={17}/> Chia sẻ ảnh</button>
       <button onClick={download} disabled={busy} className="btn btn-outline"><Download size={17}/> Lưu ảnh PNG</button>
     </div>
+    {showItemsEditor&&<OrderItemsEditorV26 order={order} hasCarton={!!savedCarton} onClose={()=>setShowItemsEditor(false)} onSaved={saved=>{setOrder(saved);setShowItemsEditor(false);setMsg(order.payment_status==='paid'&&saved.payment_status==='unpaid'?'Đã sửa đơn. Trạng thái chuyển CHƯA THANH TOÁN vì tổng tiền thay đổi, hãy đối soát phần chênh lệch. Sau đó in lại hóa đơn.':'Đã cập nhật sản phẩm và số lượng. Bạn có thể in lại hóa đơn cùng mã đơn.');}}/>}
     {msg&&<div className="notice hide-print" style={{maxWidth:700,margin:'12px auto'}}>{msg}</div>}
     <div className="invoice-wrap" ref={ref}><InvoiceContent order={order} carton={savedCarton??order.carton} settings={data.settings}/></div>
     <p className="hint hide-print" style={{textAlign:'center',marginTop:16}}>Để in chính xác 80mm, chọn đúng khổ giấy trong cài đặt máy in. Đây là phiếu bán hàng nội bộ, không thay thế hóa đơn điện tử hợp pháp khi pháp luật yêu cầu.</p>
